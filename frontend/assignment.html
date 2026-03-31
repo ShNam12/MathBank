@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Quản lý &amp; Xuất Đề thi - MathBank</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- MathJax for LaTeX rendering -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>
+window.MathJax = {
+    tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+    },
+    options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+    }
+};
+</script>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Serif:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "surface-dark": "#192233",
+                        "border-dark": "#232f48",
+                        "text-secondary": "#92a4c9"
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "math": ["Noto Serif", "serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom Scrollbar for dark theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #101622; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #232f48; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #324467; 
+        }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-filled {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-hidden h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-border-dark bg-background-dark px-6 py-3 shrink-0 z-20">
+<div class="flex items-center gap-4 text-white">
+<div class="size-8 flex items-center justify-center bg-primary rounded-lg text-white">
+<span class="material-symbols-outlined">calculate</span>
+</div>
+<h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em]">MathBank Pro</h2>
+</div>
+<div class="flex flex-1 justify-end gap-8 items-center">
+<div class="flex items-center gap-6 hidden md:flex">
+<a class="text-text-secondary hover:text-white text-sm font-medium leading-normal transition-colors" href="dashboard.html">Trang chủ</a>
+<a class="text-white text-sm font-medium leading-normal transition-colors" href="#">Ngân hàng câu hỏi</a>
+<a class="text-text-secondary hover:text-white text-sm font-medium leading-normal transition-colors" href="warehouse.html">Đề thi</a>
+<a class="text-text-secondary hover:text-white text-sm font-medium leading-normal transition-colors" href="#">Báo cáo</a>
+</div>
+<div class="h-8 w-[1px] bg-border-dark mx-2"></div>
+<div class="flex items-center gap-3">
+<div class="text-right hidden sm:block">
+<p class="text-sm font-medium text-white">Thầy Nguyễn Văn A</p>
+<p class="text-xs text-text-secondary">Giáo viên Toán</p>
+</div>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 ring-2 ring-border-dark" data-alt="Avatar of the user" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCXkdfgCTBW3x_v8fh-hfLEAI62AlVjLYI8wxYFrKJDfCnioJrE6VjEaV1JveBdrr19m3sQEMsjkOFERnDNVuJQpU8nKgbApqAtzhA4Ou_7-BdZYc-Xm_spw_4gChbFT3kNcfm4SSEcotHLuVWnHfMTqlBBj40WW0XTftyit9HwaA0oop9mSZWGBav6efJFTl8uCb6t8ncG-fahL4EohPavuuPyiHlo-CHnyBpjADajhxcz06Q06rmciA0pPNXMSmIdsve34QdlQw");'></div>
+</div>
+</div>
+</header>
+<!-- Toolbar / Command Center -->
+<div class="bg-surface-dark border-b border-border-dark px-6 py-3 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shrink-0 shadow-sm z-10">
+<div class="flex flex-1 w-full md:w-auto items-center gap-4">
+<div class="flex flex-col flex-1 max-w-2xl">
+<label class="text-xs text-text-secondary font-medium mb-1 uppercase tracking-wider">Tên đề thi</label>
+<input class="bg-background-dark border border-border-dark text-white text-lg font-semibold rounded px-3 py-1.5 focus:outline-none focus:border-primary w-full" type="text" value="Đề thi thử Tốt nghiệp THPT 2024 - Mã đề 101"/>
+</div>
+</div>
+<div class="flex items-center gap-3 w-full md:w-auto justify-end">
+<button class="flex items-center justify-center gap-2 h-10 px-4 bg-background-dark border border-border-dark hover:bg-border-dark text-white text-sm font-medium rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[20px]">save</span>
+<span class="hidden sm:inline">Lưu nháp</span>
+</button>
+<button id="shuffle-questions-btn" class="flex items-center justify-center gap-2 h-10 px-4 bg-background-dark border border-border-dark hover:bg-border-dark text-white text-sm font-medium rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[20px]">shuffle</span>
+<span class="hidden sm:inline">Xáo trộn</span>
+</button>
+<div class="h-8 w-[1px] bg-border-dark mx-1"></div>
+<div class="relative group">
+<button class="flex items-center justify-center gap-2 h-10 px-5 bg-primary hover:bg-blue-600 text-white text-sm font-bold rounded-lg shadow-lg shadow-blue-900/20 transition-all">
+<span class="material-symbols-outlined text-[20px]">ios_share</span>
+<span>Xuất Đề Thi</span>
+<span class="material-symbols-outlined text-[18px]">expand_more</span>
+</button>
+<!-- Dropdown Simulation -->
+<div class="absolute right-0 mt-2 w-48 bg-surface-dark border border-border-dark rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all transform origin-top-right z-50">
+<a class="block px-4 py-2 text-sm text-white hover:bg-primary/20 flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-[18px] text-blue-400">description</span> Word (.docx)
+                    </a>
+<a class="block px-4 py-2 text-sm text-white hover:bg-primary/20 flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-[18px] text-green-400">functions</span> LaTeX (.tex)
+                    </a>
+<a class="block px-4 py-2 text-sm text-white hover:bg-primary/20 flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-[18px] text-orange-400">school</span> Moodle XML
+                    </a>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Workspace (Split View) -->
+<main class="flex-1 flex overflow-hidden">
+<!-- LEFT PANEL: Builder / Question Bank -->
+<aside class="w-[400px] flex flex-col border-r border-border-dark bg-background-dark shrink-0 transition-all">
+<!-- Search & Filters -->
+<div class="p-4 border-b border-border-dark flex flex-col gap-3 bg-surface-dark">
+<div class="relative">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3 text-text-secondary">
+<span class="material-symbols-outlined">search</span>
+</span>
+<input class="w-full bg-background-dark border border-border-dark text-white text-sm rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:border-primary placeholder:text-gray-600" placeholder="Tìm kiếm theo ID, nội dung..." type="text"/>
+</div>
+<div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar flex-wrap">
+<select id="subject-filter" class="bg-background-dark border border-border-dark text-white text-xs rounded px-2 py-1.5 focus:outline-none cursor-pointer">
+<option value="">Môn: Tất cả</option>
+</select>
+<select id="chapter-filter" class="bg-background-dark border border-border-dark text-white text-xs rounded px-2 py-1.5 focus:outline-none cursor-pointer" disabled>
+<option value="">Chương: --</option>
+</select>
+<select id="section-filter" class="bg-background-dark border border-border-dark text-white text-xs rounded px-2 py-1.5 focus:outline-none cursor-pointer" disabled>
+<option value="">Phần: --</option>
+</select>
+<select id="difficulty-filter" class="bg-background-dark border border-border-dark text-white text-xs rounded px-2 py-1.5 focus:outline-none cursor-pointer">
+<option value="">Độ khó: Tất cả</option>
+<option value="1">Nhận biết</option>
+<option value="2">Thông hiểu</option>
+<option value="3">Vận dụng</option>
+<option value="4">Vận dụng cao</option>
+</select>
+</div>
+<div class="flex items-center justify-between text-xs text-text-secondary mt-1">
+<span id="question-count">Kết quả: <strong class="text-white">0</strong> câu hỏi</span>
+<button class="text-primary hover:text-blue-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">filter_list</span> Bộ lọc nâng cao
+                    </button>
+</div>
+</div>
+<!-- Question List -->
+<div id="question-list-container" class="flex-1 overflow-y-auto p-3 space-y-3">
+    <div class="flex flex-col items-center justify-center h-40 text-text-secondary opacity-50">
+        <span class="material-symbols-outlined text-4xl mb-2 animate-spin">sync</span>
+        <p class="text-xs">Đang tải dữ liệu...</p>
+    </div>
+</div>
+</aside>
+<!-- RIGHT PANEL: Live Preview -->
+<section class="flex-1 bg-gray-900/50 flex flex-col relative overflow-hidden">
+<!-- Paper Container -->
+<div class="flex-1 overflow-y-auto p-8 flex justify-center">
+<div class="w-full max-w-[800px] bg-white text-black min-h-[1000px] shadow-2xl rounded-sm p-12 relative">
+<!-- Paper Header (Simulated) -->
+<div class="flex justify-between border-b-2 border-black pb-4 mb-8">
+<div class="text-center w-1/3">
+<p class="font-bold uppercase text-xs">Sở GD&amp;ĐT Hà Nội</p>
+<p class="font-bold uppercase text-xs">Trường THPT Chu Văn An</p>
+<div class="w-16 h-[1px] bg-black mx-auto my-1"></div>
+</div>
+<div class="text-center w-1/3">
+<p class="font-bold uppercase text-lg">ĐỀ THI THỬ TỐT NGHIỆP</p>
+<p class="font-bold uppercase text-sm">MÔN: TOÁN HỌC</p>
+<p class="italic text-xs">Thời gian làm bài: 90 phút</p>
+</div>
+<div class="text-left w-1/3 pl-8 text-xs border-l border-black border-dashed">
+<p>Mã đề thi: <strong>101</strong></p>
+<p>Họ tên TS: ...................................</p>
+<p>SBD: ............................................</p>
+</div>
+</div>
+<!-- Selected Questions Area -->
+<div id="exam-questions-container" class="space-y-6">
+<div class="h-24 border-2 border-dashed border-gray-300 rounded flex items-center justify-center text-gray-400 text-sm mt-8">
+Kéo thả câu hỏi vào đây hoặc nhấn dấu + ở danh sách bên trái
+</div>
+</div>
+<!-- Footer of Paper -->
+<div class="mt-16 text-center text-xs text-black font-bold uppercase border-t-2 border-black pt-2 w-full">
+                        --- HẾT ---
+                    </div>
+</div>
+</div>
+<!-- Floating Preview Controls -->
+<div class="absolute bottom-6 right-8 flex flex-col gap-2">
+<button class="size-10 rounded-full bg-surface-dark border border-border-dark text-white shadow-lg hover:bg-primary hover:border-primary transition-colors flex items-center justify-center" title="Zoom In">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="size-10 rounded-full bg-surface-dark border border-border-dark text-white shadow-lg hover:bg-primary hover:border-primary transition-colors flex items-center justify-center" title="Zoom Out">
+<span class="material-symbols-outlined">remove</span>
+</button>
+</div>
+</section>
+</main>
+<!-- Status Bar / Footer -->
+<footer class="h-10 bg-background-dark border-t border-border-dark shrink-0 flex items-center justify-between px-6 text-xs text-text-secondary select-none">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary">list_alt</span>
+<span id="exam-question-count">Số câu hỏi: <strong class="text-white">0 / 50</strong></span>
+</div>
+<div class="h-3 w-[1px] bg-border-dark"></div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-green-500">timer</span>
+<span>Thời gian: <strong class="text-white">90 phút</strong></span>
+</div>
+<div class="h-3 w-[1px] bg-border-dark"></div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-orange-500">grade</span>
+<span>Tổng điểm: <strong class="text-white">10.0</strong></span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+<span>Đã lưu lúc 14:05</span>
+</div>
+<span>Trang 1 / 4 (Dự kiến)</span>
+</div>
+</footer>
+<!-- LaTeX Export Modal -->
+<div id="latex-export-modal" class="fixed inset-0 bg-black/70 z-50 hidden items-center justify-center">
+    <div class="bg-surface-dark border border-border-dark rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] m-4 flex flex-col">
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between p-4 border-b border-border-dark">
+            <h3 class="text-white text-lg font-bold">Xuất đề thi ra LaTeX</h3>
+            <button id="close-latex-modal-btn" class="text-text-secondary hover:text-white text-2xl leading-none w-8 h-8 flex items-center justify-center rounded hover:bg-border-dark transition-colors" title="Đóng">×</button>
+        </div>
+        
+        <!-- Modal Body -->
+        <div class="flex-1 overflow-hidden p-4 flex flex-col min-h-0">
+            <label class="text-text-secondary text-sm mb-2 block">LaTeX Code:</label>
+            <textarea id="latex-code-preview" class="flex-1 w-full bg-background-dark border border-border-dark text-white font-mono text-sm p-3 rounded resize-none" readonly style="min-height: 400px;"></textarea>
+        </div>
+        
+        <!-- Modal Footer -->
+        <div class="flex items-center justify-end gap-3 p-4 border-t border-border-dark">
+            <button id="download-latex-btn" class="px-4 py-2 bg-primary hover:bg-blue-600 text-white rounded-lg transition-colors font-medium flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">download</span>
+                Download .tex
+            </button>
+            <button id="copy-latex-btn" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors font-medium flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">content_copy</span>
+                Copy Code
+            </button>
+            <button id="close-latex-modal-btn-2" class="px-4 py-2 bg-background-dark border border-border-dark hover:bg-border-dark text-white rounded-lg transition-colors font-medium">Đóng</button>
+        </div>
+    </div>
+</div>
+<!-- Scripts  -->
+ <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const API_URL = "http://127.0.0.1:5000/api"; 
+        const container = document.getElementById('question-list-container');
+        if (!container) return;
+
+        // Biến lưu trữ filter hiện tại
+        let currentSubjectId = null;
+        let currentChapterId = null;
+        let currentSectionId = null;
+        let currentDifficulty = null;
+
+        // 1. HÀM TẠO BADGE MÀU SẮC CHO ĐỘ KHÓ
+        function getDifficultyBadge(level) {
+            const normLevel = String(level).toLowerCase();
+            if (normLevel.includes('easy') || normLevel.includes('nhận biết') || level == 1) {
+                return '<span class="px-1.5 py-0.5 rounded bg-blue-900/30 text-blue-400 text-[10px] font-bold border border-blue-900/50">NB</span>';
+            } else if (normLevel.includes('hard') || normLevel.includes('vận dụng') || level == 3) {
+                return '<span class="px-1.5 py-0.5 rounded bg-orange-900/30 text-orange-400 text-[10px] font-bold border border-orange-900/50">VD</span>';
+            } else if (normLevel.includes('expert') || normLevel.includes('cao') || level == 4) {
+                return '<span class="px-1.5 py-0.5 rounded bg-red-900/30 text-red-400 text-[10px] font-bold border border-red-900/50">VDC</span>';
+            } else {
+                return '<span class="px-1.5 py-0.5 rounded bg-green-900/30 text-green-400 text-[10px] font-bold border border-green-900/50">TH</span>';
+            }
+        }
+
+        // 2. HÀM HIỂN THỊ CÂU HỎI
+        function renderQuestionList(questions) {
+            if (!questions || questions.length === 0) {
+                container.innerHTML = '<div class="text-center text-text-secondary mt-10"><p class="text-xs">Chưa có câu hỏi nào.</p></div>';
+                return;
+            }
+            
+            let html = '';
+            questions.forEach(function(q) {
+                const id = q.id || 'N/A';
+                let content = q.content || 'Nội dung câu hỏi đang cập nhật...';
+                const difficulty = q.difficulty || 'Medium';
+                const difficultyLevel = q.difficulty_level || q.difficulty;
+                const badge = getDifficultyBadge(difficultyLevel);
+                
+                // Xử lý content: detect format, convert nếu cần, clean LaTeX
+                // Lưu ý: Không wrap delimiter cho content trong danh sách vì MathJax tự detect
+                let contentFormatType = detectAnswerFormat(content);
+                
+                // Convert nếu là Python format
+                if (contentFormatType === 'python') {
+                    try {
+                        content = convertPythonToLatex(content);
+                        contentFormatType = 'latex';
+                    } catch (e) {
+                        console.warn('Failed to convert Python to LaTeX for question content', id, ':', e);
+                        // Fallback: giữ nguyên content gốc
+                    }
+                }
+                
+                // Clean LaTeX (chỉ clean, không wrap delimiter)
+                if (contentFormatType === 'latex' || contentFormatType === 'plain') {
+                    content = cleanLaTeX(content);
+                }
+                
+                // KHÔNG wrap delimiter cho content trong danh sách
+                // MathJax sẽ tự động detect và render LaTeX trong content
+                
+                html += '<div class="bg-surface-dark border border-border-dark rounded-lg p-3 mb-3 hover:border-primary transition-colors relative group" data-question=\'' + JSON.stringify(q).replace(/'/g, "&#39;") + '\'>';
+                html += '<button onclick="addToPaperFromElement(this)" class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-primary hover:bg-blue-600 text-white rounded-full p-1.5" title="Thêm vào đề">';
+                html += '<span class="material-symbols-outlined text-[18px]">add</span>';
+                html += '</button>';
+                html += '<div class="flex gap-2 mb-2 items-center">' + badge;
+                html += '<span class="text-[10px] text-gray-500">ID: ' + id + '</span>';
+                html += '<span class="text-[10px] text-gray-500">Độ khó: ' + difficulty + '</span>';
+                html += '</div>';
+                html += '<p class="text-sm text-gray-300 mb-2 line-clamp-2 pr-8">' + content + '</p>';
+                html += '</div>';
+            });
+            
+            container.innerHTML = html;
+            
+            // Render LaTeX với MathJax sau khi thêm HTML
+            // Đảm bảo MathJax đã sẵn sàng và DOM đã được cập nhật
+            function renderMathJaxForList() {
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    window.MathJax.typesetPromise([container]).catch(function(err) {
+                        console.error('MathJax render error:', err);
+                    });
+                } else if (window.MathJax && window.MathJax.typeset) {
+                    // Fallback cho phiên bản MathJax cũ hơn
+                    window.MathJax.typeset([container]);
+                }
+            }
+            
+            // Đợi một chút để đảm bảo DOM đã được cập nhật hoàn toàn
+            setTimeout(renderMathJaxForList, 0);
+        }
+
+        // 3. LOAD DANH SÁCH MÔN HỌC
+        async function loadSubjects() {
+            try {
+                const response = await fetch(API_URL + '/get-all-subjects');
+                const data = await response.json();
+                const subjectSelect = document.getElementById('subject-filter');
+                
+                subjectSelect.innerHTML = '<option value="">Môn: Tất cả</option>';
+                if (data.subjects && data.subjects.length > 0) {
+                    data.subjects.forEach(function(subject) {
+                        const option = document.createElement('option');
+                        option.value = subject.id;
+                        option.textContent = 'Môn: ' + subject.name;
+                        subjectSelect.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Lỗi load môn học:', error);
+            }
+        }
+
+        // 4. LOAD DANH SÁCH CHƯƠNG KHI CHỌN MÔN HỌC
+        async function loadChapters(subjectId) {
+            const chapterSelect = document.getElementById('chapter-filter');
+            const sectionSelect = document.getElementById('section-filter');
+            
+            chapterSelect.innerHTML = '<option value="">Chương: Tất cả</option>';
+            chapterSelect.disabled = !subjectId;
+            sectionSelect.innerHTML = '<option value="">Phần: --</option>';
+            sectionSelect.disabled = true;
+            currentChapterId = null;
+            currentSectionId = null;
+            
+            if (!subjectId) {
+                loadQuestions();
+                return;
+            }
+            
+            try {
+                const response = await fetch(API_URL + '/subjects/' + subjectId + '/chapters');
+                const data = await response.json();
+                
+                if (data.chapters && data.chapters.length > 0) {
+                    data.chapters.forEach(function(chapter) {
+                        const option = document.createElement('option');
+                        option.value = chapter.id;
+                        option.textContent = chapter.name;
+                        chapterSelect.appendChild(option);
+                    });
+                    chapterSelect.disabled = false;
+                }
+            } catch (error) {
+                console.error('Lỗi load chương:', error);
+            }
+        }
+
+        // 5. LOAD DANH SÁCH PHẦN KHI CHỌN CHƯƠNG
+        async function loadSections(chapterId) {
+            const sectionSelect = document.getElementById('section-filter');
+            sectionSelect.innerHTML = '<option value="">Phần: Tất cả</option>';
+            sectionSelect.disabled = !chapterId;
+            currentSectionId = null;
+            
+            if (!chapterId) {
+                loadQuestions();
+                return;
+            }
+            
+            try {
+                const response = await fetch(API_URL + '/chapters/' + chapterId + '/sections');
+                const data = await response.json();
+                
+                if (data.sections && data.sections.length > 0) {
+                    data.sections.forEach(function(section) {
+                        const option = document.createElement('option');
+                        option.value = section.id;
+                        option.textContent = section.name;
+                        sectionSelect.appendChild(option);
+                    });
+                    sectionSelect.disabled = false;
+                } else {
+                    // Nếu không có phần, load câu hỏi trực tiếp từ chương
+                    loadQuestions();
+                }
+            } catch (error) {
+                console.error('Lỗi load phần:', error);
+            }
+        }
+
+        // 6. LOAD CÂU HỎI THEO FILTER
+        async function loadQuestions() {
+            try {
+                let url = API_URL + '/get-questions';
+                const params = [];
+                
+                // Filter theo category (ưu tiên section, sau đó chapter)
+                if (currentSectionId) {
+                    params.push('category_id=' + currentSectionId);
+                } else if (currentChapterId) {
+                    params.push('category_id=' + currentChapterId);
+                }
+                
+                // Filter theo difficulty (số: 1,2,3,4)
+                if (currentDifficulty) {
+                    params.push('difficulty=' + currentDifficulty);
+                }
+                
+                if (params.length > 0) {
+                    url += '?' + params.join('&');
+                }
+                
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Lỗi kết nối');
+                
+                const data = await response.json();
+                
+                // Cập nhật số lượng
+                const countEl = document.getElementById('question-count');
+                if (countEl) {
+                    countEl.innerHTML = 'Kết quả: <strong class="text-white">' + data.length + '</strong> câu hỏi';
+                }
+                
+                renderQuestionList(data);
+            } catch (error) {
+                container.innerHTML = '<div class="text-center text-red-400 mt-10"><p class="text-xs">Lỗi: ' + error.message + '</p></div>';
+            }
+        }
+
+        // 7. EVENT HANDLERS
+        document.getElementById('subject-filter').addEventListener('change', function() {
+            currentSubjectId = this.value ? parseInt(this.value) : null;
+            loadChapters(currentSubjectId);
+            if (!currentSubjectId) {
+                loadQuestions();
+            }
+        });
+
+        document.getElementById('chapter-filter').addEventListener('change', function() {
+            currentChapterId = this.value ? parseInt(this.value) : null;
+            loadSections(currentChapterId);
+            if (!currentChapterId) {
+                loadQuestions();
+            }
+        });
+
+        document.getElementById('section-filter').addEventListener('change', function() {
+            currentSectionId = this.value ? parseInt(this.value) : null;
+            loadQuestions();
+        });
+
+        document.getElementById('difficulty-filter').addEventListener('change', function() {
+            currentDifficulty = this.value || null;
+            loadQuestions();
+        });
+
+        // 8. KHỞI TẠO
+        loadSubjects();
+        loadQuestions();
+        
+        // Khởi tạo render đề thi (empty state)
+        if (typeof renderExamQuestions === 'function') {
+            renderExamQuestions();
+        }
+        
+        // Gắn event handler cho nút Xáo trộn
+        const shuffleBtn = document.getElementById('shuffle-questions-btn');
+        if (shuffleBtn) {
+            shuffleBtn.addEventListener('click', function() {
+                shuffleExamQuestions();
+            });
+        }
+        
+        // Gắn event handler cho nút "LaTeX (.tex)" trong dropdown
+        // Tìm tất cả các link trong dropdown và gắn event cho link LaTeX
+        const dropdownLinks = document.querySelectorAll('.absolute.right-0.mt-2 a');
+        dropdownLinks.forEach(function(link) {
+            // Kiểm tra text content có chứa "LaTeX" không (case insensitive)
+            const linkText = link.textContent.trim();
+            if (linkText.includes('LaTeX') || linkText.includes('latex')) {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showLaTeXModal();
+                });
+            }
+        });
+        
+        // Gắn event handler cho nút đóng modal (header)
+        const closeBtn1 = document.getElementById('close-latex-modal-btn');
+        if (closeBtn1) {
+            closeBtn1.addEventListener('click', function() {
+                closeLaTeXModal();
+            });
+        }
+        
+        // Gắn event handler cho nút đóng modal (footer)
+        const closeBtn2 = document.getElementById('close-latex-modal-btn-2');
+        if (closeBtn2) {
+            closeBtn2.addEventListener('click', function() {
+                closeLaTeXModal();
+            });
+        }
+        
+        // Gắn event handler cho nút download
+        const downloadBtn = document.getElementById('download-latex-btn');
+        if (downloadBtn) {
+            downloadBtn.addEventListener('click', function() {
+                downloadLaTeXFile();
+            });
+        }
+        
+        // Gắn event handler cho nút copy
+        const copyBtn = document.getElementById('copy-latex-btn');
+        if (copyBtn) {
+            copyBtn.addEventListener('click', function() {
+                copyLaTeXToClipboard();
+            });
+        }
+        
+        // Gắn event handler để đóng modal khi click outside
+        const modal = document.getElementById('latex-export-modal');
+        if (modal) {
+            modal.addEventListener('click', function(e) {
+                // Nếu click vào overlay (không phải modal content)
+                if (e.target === modal) {
+                    closeLaTeXModal();
+                }
+            });
+        }
+        
+        // Gắn event handler để đóng modal khi nhấn ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('latex-export-modal');
+                if (modal && !modal.classList.contains('hidden')) {
+                    closeLaTeXModal();
+                }
+            }
+        });
+    });
+    
+    // Danh sách câu hỏi trong đề thi
+    let examQuestions = [];
+    
+    // Hàm phát hiện format của đáp án (Python/LaTeX/Plain)
+    function detectAnswerFormat(text) {
+        if (!text || typeof text !== 'string') return 'plain';
+        
+        // LaTeX indicators (ưu tiên cao)
+        const latexPatterns = [
+            /\\[a-zA-Z]+/,        // \lambda, \frac, \sqrt, \exp, etc.
+            /\^\{/,               // ^{ (superscript với dấu ngoặc)
+            /\\begin\{/,          // \begin{matrix}, \begin{pmatrix}, etc.
+            /\\end\{/,            // \end{matrix}, \end{pmatrix}, etc.
+            /\\frac\{/,           // \frac{}{}
+            /\\sqrt\{/,           // \sqrt{}
+            /\\cdot/,             // \cdot
+            /\\exp\s*\(/,         // \exp(
+        ];
+        
+        // Python indicators
+        const pythonPatterns = [
+            /\blambda\s*\*\s*\*/,     // lambda * * (phép lũy thừa với lambda, có khoảng trắng)
+            /\blambda\*\*/,           // lambda** (phép lũy thừa với lambda, không có khoảng trắng)
+            /\blambda\*\*\d+/,        // lambda**2 (phép lũy thừa với lambda và số)
+            /\blambda\b/,             // lambda (không phải \lambda) - đặt sau các pattern cụ thể hơn
+            /\bexp\s*\(/,             // exp( (không phải \exp)
+            /\*\s*\*\d+/,             // * *2 hoặc **2 (phép lũy thừa với số)
+            /\*\s*\*/,                // * * hoặc ** (phép lũy thừa)
+            /\bsqrt\s*\(/,            // sqrt( (không phải \sqrt)
+            /\(\([^)]+\)\s*,\s*\([^)]+\)\)/,  // ((a,b), (c,d)) - matrix format
+        ];
+        
+        // Check LaTeX first (higher priority)
+        for (const pattern of latexPatterns) {
+            if (pattern.test(text)) {
+                return 'latex';
+            }
+        }
+        
+        // Check Python
+        for (const pattern of pythonPatterns) {
+            if (pattern.test(text)) {
+                return 'python';
+            }
+        }
+        
+        return 'plain';
+    }
+    
+    // Hàm helper: Chuyển đổi ma trận từ format Python sang LaTeX
+    function convertMatrix(text) {
+        // Pattern: ((a, b), (c, d)) → \begin{pmatrix} a & b \\ c & d \end{pmatrix}
+        const pattern = /\(\(([^)]+)\),\s*\(([^)]+)\)\)/g;
+        
+        return text.replace(pattern, function(match, row1, row2) {
+            // Split các phần tử trong mỗi hàng
+            const cells1 = row1.split(',').map(function(c) { return c.trim(); });
+            const cells2 = row2.split(',').map(function(c) { return c.trim(); });
+            
+            // Tạo LaTeX matrix
+            let latex = '\\begin{pmatrix} ';
+            latex += cells1.join(' & ');
+            latex += ' \\\\ ';
+            latex += cells2.join(' & ');
+            latex += ' \\end{pmatrix}';
+            
+            return latex;
+        });
+    }
+    
+    // Hàm helper: Chuyển đổi phân số từ format Python sang LaTeX
+    function convertFraction(text) {
+        // Pattern: a/b → \frac{a}{b}
+        // Chỉ convert trong context toán học (cẩn thận với division trong code)
+        // Pattern cải thiện: match cả \lambda và lambda, và các ký tự toán học khác
+        const pattern = /([a-zA-Z0-9\\\s\(\)\^]+)\s*\/\s*([a-zA-Z0-9\\\s\(\)\^]+)/g;
+        
+        return text.replace(pattern, function(match, numerator, denominator) {
+            // Loại bỏ khoảng trắng thừa
+            let num = numerator.trim();
+            let den = denominator.trim();
+            
+            // Chỉ convert nếu cả hai đều là biểu thức toán học hợp lệ
+            // (không chứa các ký tự đặc biệt của code như =, ;, etc.)
+            if (!/[=;]/.test(match)) {
+                // Convert lambda trong numerator và denominator thành \lambda (nếu chưa được convert)
+                // Xử lý cả lambda (chưa convert) và \lambda (đã convert)
+                num = num.replace(/\blambda\b/g, '\\lambda');
+                den = den.replace(/\blambda\b/g, '\\lambda');
+                
+                return '\\frac{' + num + '}{' + den + '}';
+            }
+            
+            return match; // Giữ nguyên nếu không phải phân số toán học
+        });
+    }
+    
+    // Hàm chính: Chuyển đổi Python code sang LaTeX
+    function convertPythonToLatex(text) {
+        if (!text || typeof text !== 'string') return text;
+        
+        let result = text;
+        
+        // 0. Convert frac + lambda + số → \frac{\lambda}{số}
+        // Xử lý các biến thể: fraclambda2, frac lambda 2, fraclambda/2, frac lambda/2
+        // Pattern: frac (có thể có khoảng trắng) lambda (có thể có khoảng trắng hoặc /) số
+        result = result.replace(/frac\s*lambda\s*\/?\s*(\d+)/gi, '\\frac{\\lambda}{$1}');
+        
+        // 0.5. Convert lambda/2 → \frac{\lambda}{2} (xử lý trước khi convert lambda đơn lẻ)
+        result = result.replace(/\blambda\s*\/\s*(\d+)/gi, '\\frac{\\lambda}{$1}');
+        
+        // 1. Convert lambda → \lambda (chỉ convert lambda đơn lẻ, không phải trong frac đã xử lý)
+        result = result.replace(/\blambda\b/g, '\\lambda');
+        
+        // 2. Convert exp(x) → e^{x}
+        result = result.replace(/\bexp\s*\(([^)]+)\)/g, 'e^{$1}');
+        
+        // 3. Convert **n hoặc * *n → ^{n}
+        result = result.replace(/\*\s*\*(\d+)/g, '^{$1}');
+        result = result.replace(/\*\*(\d+)/g, '^{$1}');
+        
+        // 4. Convert sqrt(x) → \sqrt{x}
+        result = result.replace(/\bsqrt\s*\(([^)]+)\)/g, '\\sqrt{$1}');
+        
+        // 5. Convert matrix: ((a, b), (c, d)) → \begin{pmatrix} a & b \\ c & d \end{pmatrix}
+        result = convertMatrix(result);
+        
+        // 6. Convert fraction: a/b → \frac{a}{b}
+        result = convertFraction(result);
+        
+        // 7. Clean multiplication: loại bỏ dấu * trong phép nhân
+        // Pattern: số/biến * số/biến → số/biến số/biến (loại bỏ * và khoảng trắng)
+        result = result.replace(/([a-zA-Z0-9\)])\s*\*\s*([a-zA-Z0-9\(])/g, '$1$2');
+        
+        // 7.5. Đảm bảo tất cả lambda còn lại (kể cả trong fraction) đều được convert
+        // Xử lý lambda trong \frac{lambda}{...} hoặc các trường hợp đặc biệt khác
+        // Pattern: match lambda trong \frac{...}{...} (cả numerator và denominator)
+        result = result.replace(/\\frac\{([^}]*)\blambda\b([^}]*)\}\{([^}]+)\}/g, '\\frac{$1\\lambda$2}{$3}');
+        result = result.replace(/\\frac\{([^}]+)\}\{([^}]*)\blambda\b([^}]*)\}/g, '\\frac{$1}{$2\\lambda$3}');
+        // Xử lý lambda còn lại (không có \ trước đó, không trong fraction đã xử lý)
+        // Chỉ convert lambda không có \ trước đó (tránh convert \lambda thành \\lambda)
+        result = result.replace(/([^\\]|^)\blambda\b/g, '$1\\lambda');
+        
+        // 8. Clean up spaces (loại bỏ khoảng trắng thừa)
+        result = result.replace(/\s+/g, ' ').trim();
+        
+        return result;
+    }
+    
+    // Hàm xử lý LaTeX để loại bỏ \left và \right và sửa format ma trận
+    function cleanLaTeX(text) {
+        if (!text) return text;
+        
+        // Xử lý ma trận có \left[ và \right] TRƯỚC (để tránh xử lý nhầm): \left[\begin{matrix}...\end{matrix}\right] -> \begin{bmatrix}...\end{bmatrix}
+        text = text.replace(/\\left\[\s*\\begin\{matrix\}([\s\S]*?)\\end\{matrix\}\s*\\right\]/g, function(match, content) {
+            return '\\begin{bmatrix}' + content + '\\end{bmatrix}';
+        });
+        
+        // Xử lý ma trận có \left( và \right) TRƯỚC: \left(\begin{matrix}...\end{matrix}\right) -> \begin{pmatrix}...\end{pmatrix}
+        text = text.replace(/\\left\(\s*\\begin\{matrix\}([\s\S]*?)\\end\{matrix\}\s*\\right\)/g, function(match, content) {
+            return '\\begin{pmatrix}' + content + '\\end{pmatrix}';
+        });
+        
+        // Xử lý ma trận: [\begin{matrix}...\end{matrix}] -> \begin{bmatrix}...\end{bmatrix} (có dấu ngoặc vuông)
+        text = text.replace(/\[\s*\\begin\{matrix\}([\s\S]*?)\\end\{matrix\}\s*\]/g, function(match, content) {
+            return '\\begin{bmatrix}' + content + '\\end{bmatrix}';
+        });
+        
+        // Xử lý ma trận: (\begin{matrix}...\end{matrix}) -> \begin{pmatrix}...\end{pmatrix} (có dấu ngoặc tròn)
+        text = text.replace(/\(\s*\\begin\{matrix\}([\s\S]*?)\\end\{matrix\}\s*\)/g, function(match, content) {
+            return '\\begin{pmatrix}' + content + '\\end{pmatrix}';
+        });
+        
+        // Thay thế \left[ và \right] thành [ và ] (cho các trường hợp khác không phải ma trận)
+        // Lưu ý: Chỉ thay thế nếu không nằm trong \begin{matrix}...\end{matrix} (đã xử lý ở trên)
+        text = text.replace(/\\left\[/g, '[');
+        text = text.replace(/\\right\]/g, ']');
+        
+        // Thay thế \left( và \right) thành ( và ) (cho các trường hợp khác không phải ma trận)
+        text = text.replace(/\\left\(/g, '(');
+        text = text.replace(/\\right\)/g, ')');
+        
+        // Thay thế \left\{ và \right\} thành { và }
+        text = text.replace(/\\left\\{/g, '{');
+        text = text.replace(/\\right\\}/g, '}');
+        
+        // Thay thế \left| và \right| thành | và |
+        text = text.replace(/\\left\|/g, '|');
+        text = text.replace(/\\right\|/g, '|');
+        
+        return text;
+    }
+    
+    // Hàm helper để lấy dữ liệu từ element
+    function addToPaperFromElement(button) {
+        const questionCard = button.closest('[data-question]');
+        if (!questionCard) return;
+        
+        try {
+            const questionJson = questionCard.getAttribute('data-question');
+            const questionData = JSON.parse(questionJson);
+            addToPaper(questionData);
+        } catch (e) {
+            console.error('Lỗi parse JSON:', e);
+        }
+    }
+    
+    // Thêm câu hỏi vào đề thi
+    function addToPaper(questionData) {
+        // Kiểm tra xem câu hỏi đã có trong đề chưa
+        const questionId = questionData.question_id || questionData.id;
+        if (examQuestions.some(q => (q.question_id || q.id) === questionId)) {
+            alert("Câu hỏi này đã có trong đề thi!");
+            return;
+        }
+        
+        // Thêm câu hỏi vào danh sách
+        examQuestions.push(questionData);
+        
+        // Render lại đề thi
+        renderExamQuestions();
+        
+        // Cập nhật số lượng câu hỏi
+        updateExamStats();
+    }
+    
+    // Xóa câu hỏi khỏi đề thi
+    function removeFromPaper(questionId) {
+        // Tìm và xóa câu hỏi khỏi mảng
+        // questionId có thể là "ID-7" hoặc "7" hoặc số 7
+        const indexToRemove = examQuestions.findIndex(q => {
+            const qId = q.question_id || q.id;
+            const qIdStr = String(qId);
+            const questionIdStr = String(questionId);
+            
+            // So sánh trực tiếp
+            if (qId === questionId || qIdStr === questionIdStr) return true;
+            
+            // So sánh nếu có format "ID-X"
+            if (qIdStr.includes('ID-') && questionIdStr.includes('ID-')) {
+                return qIdStr === questionIdStr;
+            }
+            
+            // So sánh số (nếu questionId là "ID-7" và qId là 7)
+            const qIdNum = qIdStr.replace('ID-', '');
+            const questionIdNum = questionIdStr.replace('ID-', '');
+            if (qIdNum === questionIdNum) return true;
+            
+            return false;
+        });
+        
+        if (indexToRemove === -1) {
+            console.warn('Không tìm thấy câu hỏi để xóa. questionId:', questionId, 'Danh sách:', examQuestions.map(q => q.question_id || q.id));
+            return;
+        }
+        
+        // Xóa câu hỏi khỏi mảng
+        examQuestions.splice(indexToRemove, 1);
+        
+        // Render lại để cập nhật số thứ tự (các câu sau tự động giảm 1, các câu trước giữ nguyên)
+        renderExamQuestions();
+        
+        // Cập nhật thống kê
+        updateExamStats();
+    }
+    
+    // Hàm bắt đầu drag từ nút drag_pan (4 mũi tên)
+    function startDragFromButton(event, questionId) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        const container = document.getElementById('exam-questions-container');
+        const questionElement = container.querySelector('[data-question-id="' + questionId + '"]');
+        if (!questionElement) return;
+        
+        // Đảm bảo element có thể drag
+        questionElement.draggable = true;
+        
+        // Tạo và dispatch dragstart event với dataTransfer
+        try {
+            const dragEvent = new DragEvent('dragstart', {
+                bubbles: true,
+                cancelable: true,
+                dataTransfer: new DataTransfer()
+            });
+            dragEvent.dataTransfer.effectAllowed = 'move';
+            dragEvent.dataTransfer.setData('text/plain', questionId);
+            questionElement.dispatchEvent(dragEvent);
+        } catch (e) {
+            // Fallback: Nếu không tạo được DragEvent, dùng cách khác
+            // Đánh dấu element để drag
+            questionElement.setAttribute('data-dragging', 'true');
+            questionElement.style.cursor = 'grabbing';
+        }
+    }
+    
+    // Sửa câu hỏi (placeholder - sẽ bổ sung sau)
+    function editQuestionInPaper(questionId) {
+        alert("Chức năng sửa câu hỏi sẽ được bổ sung sau");
+    }
+    
+    // Di chuyển câu hỏi (placeholder - sẽ bổ sung sau)
+    function moveQuestionInPaper(questionId, direction) {
+        const index = examQuestions.findIndex(q => (q.question_id || q.id) === questionId);
+        if (index === -1) return;
+        
+        if (direction === 'up' && index > 0) {
+            [examQuestions[index], examQuestions[index - 1]] = [examQuestions[index - 1], examQuestions[index]];
+        } else if (direction === 'down' && index < examQuestions.length - 1) {
+            [examQuestions[index], examQuestions[index + 1]] = [examQuestions[index + 1], examQuestions[index]];
+        }
+        
+        renderExamQuestions();
+    }
+    
+    // Render danh sách câu hỏi trong đề thi
+    function renderExamQuestions() {
+        const container = document.getElementById('exam-questions-container');
+        if (!container) return;
+        
+        if (examQuestions.length === 0) {
+            container.innerHTML = '<div class="h-24 border-2 border-dashed border-gray-300 rounded flex items-center justify-center text-gray-400 text-sm mt-8">Kéo thả câu hỏi vào đây hoặc nhấn dấu + ở danh sách bên trái</div>';
+            return;
+        }
+        
+        let html = '';
+        examQuestions.forEach(function(q, index) {
+            const questionId = q.question_id || q.id;
+            const questionNum = index + 1;
+            // Xử lý content để loại bỏ \left và \right
+            let content = q.content || 'Nội dung câu hỏi đang cập nhật...';
+            content = cleanLaTeX(content);
+            let answers = q.answers || {};
+            
+            // Nếu answers là mảng, chuyển đổi thành object với keys A, B, C, D
+            if (Array.isArray(answers)) {
+                const answerMap = {};
+                const letters = ['A', 'B', 'C', 'D'];
+                answers.forEach(function(ans, index) {
+                    if (index < letters.length) {
+                        answerMap[letters[index]] = ans;
+                    }
+                });
+                answers = answerMap;
+            }
+            
+            // Debug: Log để kiểm tra cấu trúc answers (có thể xóa sau)
+            if (Object.keys(answers).length === 0) {
+                console.warn('Câu hỏi', questionId, 'không có đáp án hoặc đáp án rỗng:', q.answers);
+            }
+            
+            // Xác định số cột cho đáp án (2 hoặc 4)
+            const answerKeys = Object.keys(answers);
+            const answerCols = answerKeys.length <= 2 ? 2 : 4;
+            
+            html += '<div class="relative group/q pl-2 -ml-2 hover:bg-blue-50/50 rounded transition-colors pr-8 cursor-move" data-question-id="' + questionId + '" draggable="true" data-index="' + index + '">';
+            html += '<!-- Hover Controls -->';
+            html += '<div class="absolute right-0 top-0 flex flex-col gap-1 opacity-0 group-hover/q:opacity-100 transition-opacity">';
+            html += '<button onclick="editQuestionInPaper(\'' + questionId + '\')" class="p-1 hover:bg-blue-100 text-blue-600 rounded" title="Sửa"><span class="material-symbols-outlined text-[18px]">edit</span></button>';
+            html += '<button onclick="removeFromPaper(\'' + String(questionId).replace(/'/g, "\\'") + '\')" class="p-1 hover:bg-red-100 text-red-600 rounded" title="Xóa"><span class="material-symbols-outlined text-[18px]">delete</span></button>';
+            html += '<div class="p-1 hover:bg-gray-100 text-gray-600 rounded cursor-move" title="Di chuyển (kéo câu hỏi)"><span class="material-symbols-outlined text-[18px]">drag_pan</span></div>';
+            html += '</div>';
+            html += '<p class="font-math text-sm mb-2 leading-relaxed">';
+            html += '<strong class="font-bold font-sans">Câu ' + questionNum + ':</strong> ' + content;
+            html += '</p>';
+            
+            if (Object.keys(answers).length > 0) {
+                html += '<div class="grid grid-cols-' + answerCols + ' gap-y-2 gap-x-4 font-math text-sm pl-4">';
+                for (const letter of ['A', 'B', 'C', 'D']) {
+                    if (answers[letter]) {
+                        // Bước 1: Lấy text/latex (ưu tiên latex)
+                        // Hỗ trợ nhiều format: text, content, hoặc string trực tiếp
+                        // Ưu tiên: latex > text > content > string
+                        let answerText = '';
+                        let formatType = 'plain';
+                        
+                        if (typeof answers[letter] === 'string') {
+                            answerText = answers[letter];
+                            formatType = detectAnswerFormat(answerText);
+                        } else if (answers[letter].latex) {
+                            answerText = answers[letter].latex;
+                            formatType = detectAnswerFormat(answerText);
+                        } else if (answers[letter].text) {
+                            answerText = answers[letter].text;
+                            formatType = detectAnswerFormat(answerText);
+                        } else if (answers[letter].content) {
+                            answerText = answers[letter].content;
+                            formatType = detectAnswerFormat(answerText);
+                        }
+                        
+                        // Debug: Log để kiểm tra (có thể xóa sau)
+                        if (answerText && answerText.includes('lambda')) {
+                            console.log('Answer', letter, ':', {
+                                latex: answers[letter].latex,
+                                text: answers[letter].text,
+                                using: answerText,  // Field đang dùng
+                                format: formatType,
+                                hasLatex: !!answers[letter].latex,
+                                hasText: !!answers[letter].text
+                            });
+                        }
+                        
+                        // Bước 2: Convert nếu là Python format
+                        if (formatType === 'python') {
+                            try {
+                                const originalText = answerText;
+                                answerText = convertPythonToLatex(answerText);
+                                formatType = 'latex'; // Sau khi convert, đánh dấu là LaTeX
+                                console.log('Converted answer', letter, ':', originalText, '→', answerText);
+                            } catch (e) {
+                                console.warn('Failed to convert Python to LaTeX for answer', letter, ':', e);
+                                // Fallback: giữ nguyên text gốc
+                            }
+                        }
+                        
+                        // Bước 3: Clean LaTeX (loại bỏ \left, \right, sửa format ma trận)
+                        if (formatType === 'latex' || formatType === 'plain') {
+                            answerText = cleanLaTeX(answerText);
+                        }
+                        
+                        // Bước 4: Render
+                        if (answerText && answerText.trim()) {
+                            // Chỉ wrap delimiter cho LaTeX, không wrap cho plain text
+                            const answerWithDelimiter = (formatType === 'latex') 
+                                ? '\\( ' + answerText + ' \\)'
+                                : answerText;
+                            
+                            html += '<div><strong class="font-sans font-medium">' + letter + '.</strong> <span class="italic font-serif">' + answerWithDelimiter + '</span></div>';
+                        }
+                    }
+                }
+                html += '</div>';
+            }
+            
+            html += '</div>';
+        });
+        
+        container.innerHTML = html;
+        
+        // Thiết lập drag & drop cho các câu hỏi
+        setupDragAndDrop();
+        
+        // Render LaTeX với MathJax sau khi thêm HTML
+        // Đảm bảo MathJax đã sẵn sàng và DOM đã được cập nhật
+        function renderMathJax() {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise([container]).catch(function(err) {
+                    console.error('MathJax render error:', err);
+                });
+            } else if (window.MathJax && window.MathJax.typeset) {
+                // Fallback cho phiên bản MathJax cũ hơn
+                window.MathJax.typeset([container]);
+            }
+        }
+        
+        // Đợi một chút để đảm bảo DOM đã được cập nhật hoàn toàn
+        setTimeout(renderMathJax, 0);
+    }
+    
+    // Thiết lập chức năng drag & drop để di chuyển câu hỏi
+    function setupDragAndDrop() {
+        const container = document.getElementById('exam-questions-container');
+        if (!container) return;
+        
+        let draggedElement = null;
+        let draggedIndex = -1;
+        
+        const questionElements = container.querySelectorAll('[data-question-id]');
+        
+        questionElements.forEach(function(element) {
+            // Bắt đầu kéo
+            element.addEventListener('dragstart', function(e) {
+                draggedElement = this;
+                const questionId = this.getAttribute('data-question-id');
+                draggedIndex = examQuestions.findIndex(q => (q.question_id || q.id) === questionId);
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', questionId);
+                this.style.opacity = '0.5';
+            });
+            
+            // Kết thúc kéo
+            element.addEventListener('dragend', function(e) {
+                this.style.opacity = '1';
+                draggedElement = null;
+                draggedIndex = -1;
+            });
+            
+            // Cho phép thả
+            element.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                
+                if (draggedElement && draggedElement !== this) {
+                    const rect = this.getBoundingClientRect();
+                    const midpoint = rect.top + rect.height / 2;
+                    
+                    if (e.clientY < midpoint) {
+                        container.insertBefore(draggedElement, this);
+                    } else {
+                        container.insertBefore(draggedElement, this.nextSibling);
+                    }
+                }
+            });
+            
+            // Khi thả
+            element.addEventListener('drop', function(e) {
+                e.preventDefault();
+                
+                if (draggedElement && draggedElement !== this) {
+                    const questionId = e.dataTransfer.getData('text/plain');
+                    
+                    // Lấy tất cả các elements sau khi đã di chuyển trong DOM (từ dragover)
+                    const allElements = Array.from(container.querySelectorAll('[data-question-id]'));
+                    const newIndex = allElements.indexOf(draggedElement);
+                    
+                    // Cập nhật thứ tự trong mảng examQuestions dựa trên vị trí mới trong DOM
+                    if (draggedIndex !== -1 && newIndex !== -1 && draggedIndex !== newIndex) {
+                        // Xóa câu hỏi khỏi vị trí cũ
+                        const [movedItem] = examQuestions.splice(draggedIndex, 1);
+                        
+                        // Điều chỉnh index nếu cần (nếu xóa ở trước vị trí mới, index mới sẽ giảm 1)
+                        let insertIndex = newIndex;
+                        if (draggedIndex < newIndex) {
+                            insertIndex = newIndex - 1;
+                        }
+                        
+                        // Chèn vào vị trí mới
+                        examQuestions.splice(insertIndex, 0, movedItem);
+                        
+                        // Render lại để cập nhật số thứ tự
+                        renderExamQuestions();
+                    }
+                }
+            });
+        });
+    }
+    
+    // Cập nhật thống kê đề thi
+    function updateExamStats() {
+        const countEl = document.getElementById('exam-question-count');
+        if (countEl) {
+            countEl.innerHTML = 'Số câu hỏi: <strong class="text-white">' + examQuestions.length + ' / 50</strong>';
+        }
+    }
+    
+    // Hàm xáo trộn thứ tự câu hỏi trong đề thi
+    function shuffleExamQuestions() {
+        // Kiểm tra có câu hỏi không
+        if (!examQuestions || examQuestions.length === 0) {
+            console.warn('Không có câu hỏi để xáo trộn');
+            alert('Không có câu hỏi nào trong đề thi để xáo trộn.');
+            return;
+        }
+        
+        // Nếu chỉ có 1 câu hỏi, không cần xáo trộn
+        if (examQuestions.length === 1) {
+            console.log('Chỉ có 1 câu hỏi, không cần xáo trộn');
+            return;
+        }
+        
+        // Lưu thứ tự cũ để so sánh (optional, để debug)
+        const oldOrder = examQuestions.map(q => q.question_id || q.id);
+        
+        // Fisher-Yates shuffle algorithm (randomize array)
+        // Thuật toán này đảm bảo phân bố đều và hiệu quả
+        for (let i = examQuestions.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [examQuestions[i], examQuestions[j]] = [examQuestions[j], examQuestions[i]];
+        }
+        
+        // Visual feedback: Thêm animation cho nút (optional)
+        const shuffleBtn = document.getElementById('shuffle-questions-btn');
+        if (shuffleBtn) {
+            shuffleBtn.style.transform = 'rotate(180deg)';
+            shuffleBtn.style.transition = 'transform 0.3s ease';
+            setTimeout(function() {
+                shuffleBtn.style.transform = 'rotate(0deg)';
+            }, 300);
+        }
+        
+        // Render lại đề thi với thứ tự mới
+        renderExamQuestions();
+        
+        // Log để debug
+        const newOrder = examQuestions.map(q => q.question_id || q.id);
+        console.log('Đã xáo trộn', examQuestions.length, 'câu hỏi');
+        console.log('Thứ tự cũ:', oldOrder);
+        console.log('Thứ tự mới:', newOrder);
+    }
+    
+    // Hàm lấy thông tin đề thi để xuất LaTeX
+    function getExamInfo() {
+        // Lấy tên đề thi từ input field trong toolbar
+        // Tìm input trong toolbar area (gần label "Tên đề thi")
+        let examTitle = 'Đề thi Toán học'; // Giá trị mặc định
+        const toolbar = document.querySelector('.bg-surface-dark.border-b.border-border-dark');
+        if (toolbar) {
+            const titleInput = toolbar.querySelector('input[type="text"]');
+            if (titleInput && titleInput.value) {
+                examTitle = titleInput.value.trim();
+            }
+        }
+        
+        // Mô tả đề thi (có thể để trống hoặc lấy từ nguồn khác)
+        const examDescription = ''; // Có thể mở rộng sau
+        
+        // Lấy danh sách câu hỏi từ examQuestions array
+        const questions = examQuestions.map(function(q, index) {
+            return {
+                number: index + 1,
+                id: q.question_id || q.id,
+                content: q.content || 'Nội dung câu hỏi đang cập nhật...',
+                answers: q.answers || {}
+            };
+        });
+        
+        return {
+            title: examTitle,
+            description: examDescription,
+            questions: questions,
+            totalQuestions: questions.length
+        };
+    }
+    
+    // Hàm chuyển đổi thông tin đề thi thành LaTeX code
+    function generateLaTeX(examInfo) {
+        if (!examInfo || !examInfo.questions || examInfo.questions.length === 0) {
+            return '\\documentclass[12pt,a4paper]{article}\n\\usepackage[utf8]{vietnam}\n\\usepackage{amsmath,amssymb}\n\\usepackage{geometry}\n\\geometry{a4paper,margin=2cm}\n\n\\begin{document}\n\n\\textbf{Lỗi:} Không có câu hỏi nào trong đề thi.\n\n\\end{document}';
+        }
+        
+        // Helper function: Xử lý nội dung câu hỏi/đáp án để chuyển sang LaTeX
+        function processContent(content) {
+            if (!content || typeof content !== 'string') return '';
+            
+            // Xác định format
+            let formatType = detectAnswerFormat(content);
+            let processedContent = content;
+            
+            // Convert nếu là Python format
+            if (formatType === 'python') {
+                processedContent = convertPythonToLatex(processedContent);
+                formatType = 'latex';
+            }
+            
+            // Clean LaTeX nếu là LaTeX hoặc đã convert từ Python
+            if (formatType === 'latex' || formatType === 'plain') {
+                processedContent = cleanLaTeX(processedContent);
+            }
+            
+            return processedContent;
+        }
+        
+        // Helper function: Escape LaTeX special characters trong plain text
+        function escapeLaTeX(text) {
+            if (!text) return '';
+            // Escape các ký tự đặc biệt của LaTeX (chỉ trong plain text, không escape trong math mode)
+            // Lưu ý: Escape backslash trước để tránh escape nhầm các ký tự khác
+            return text
+                .replace(/\\/g, '\\textbackslash{}')
+                .replace(/\{/g, '\\{')
+                .replace(/\}/g, '\\}')
+                .replace(/\$/g, '\\$')
+                .replace(/#/g, '\\#')
+                .replace(/\^/g, '\\textasciicircum{}')
+                .replace(/_/g, '\\_')
+                .replace(/&/g, '\\&')
+                .replace(/%/g, '\\%');
+        }
+        
+        // Bắt đầu tạo LaTeX code
+        let latex = '';
+        
+        // Document class và packages
+        latex += '\\documentclass[12pt,a4paper]{article}\n';
+        latex += '\\usepackage[utf8]{vietnam}\n';
+        latex += '\\usepackage{amsmath,amssymb}\n';
+        latex += '\\usepackage{geometry}\n';
+        latex += '\\geometry{a4paper,margin=2cm}\n';
+        latex += '\\usepackage{enumitem}\n';
+        latex += '\n';
+        
+        // Begin document
+        latex += '\\begin{document}\n';
+        latex += '\n';
+        
+        // Header của đề thi
+        latex += '\\begin{center}\n';
+        latex += '\\textbf{\\Large ' + escapeLaTeX(examInfo.title) + '}\n';
+        if (examInfo.description) {
+            latex += '\\\\[0.5cm]\n';
+            latex += escapeLaTeX(examInfo.description) + '\n';
+        }
+        latex += '\\end{center}\n';
+        latex += '\n';
+        latex += '\\vspace{1cm}\n';
+        latex += '\n';
+        
+        // Danh sách câu hỏi
+        latex += '\\begin{enumerate}[leftmargin=*,labelsep=0.5cm]\n';
+        
+        examInfo.questions.forEach(function(question) {
+            // Xử lý nội dung câu hỏi
+            let questionContent = processContent(question.content);
+            
+            // Nếu nội dung có LaTeX, wrap trong $...$ hoặc \(...\)
+            // Kiểm tra xem có chứa LaTeX commands không
+            const hasLatex = /\\[a-zA-Z]+|\\begin\{|\\end\{|\^\{|_\{/.test(questionContent);
+            
+            if (hasLatex) {
+                // Nội dung có LaTeX, wrap trong \(...\) cho inline math
+                questionContent = '\\( ' + questionContent + ' \\)';
+            } else {
+                // Plain text, escape LaTeX special characters
+                questionContent = escapeLaTeX(questionContent);
+            }
+            
+            // Câu hỏi
+            latex += '\\item ' + questionContent + '\n';
+            
+            // Xử lý đáp án
+            const answers = question.answers || {};
+            const answerLetters = ['A', 'B', 'C', 'D'];
+            let hasAnswers = false;
+            
+            // Kiểm tra xem có đáp án không
+            for (const letter of answerLetters) {
+                if (answers[letter]) {
+                    hasAnswers = true;
+                    break;
+                }
+            }
+            
+            if (hasAnswers) {
+                latex += '\\begin{enumerate}[label=\\Alph*.,leftmargin=1.5cm]\n';
+                
+                for (const letter of answerLetters) {
+                    if (answers[letter]) {
+                        // Lấy text/latex của đáp án
+                        let answerText = '';
+                        let answerFormat = 'plain';
+                        
+                        if (typeof answers[letter] === 'string') {
+                            answerText = answers[letter];
+                            answerFormat = detectAnswerFormat(answerText);
+                        } else if (answers[letter].latex) {
+                            answerText = answers[letter].latex;
+                            answerFormat = detectAnswerFormat(answerText);
+                        } else if (answers[letter].text) {
+                            answerText = answers[letter].text;
+                            answerFormat = detectAnswerFormat(answerText);
+                        } else if (answers[letter].content) {
+                            answerText = answers[letter].content;
+                            answerFormat = detectAnswerFormat(answerText);
+                        }
+                        
+                        // Xử lý đáp án
+                        let processedAnswer = processContent(answerText);
+                        
+                        // Kiểm tra xem có LaTeX không
+                        const answerHasLatex = /\\[a-zA-Z]+|\\begin\{|\\end\{|\^\{|_\{/.test(processedAnswer);
+                        
+                        if (answerHasLatex) {
+                            // Wrap trong \(...\) cho inline math
+                            processedAnswer = '\\( ' + processedAnswer + ' \\)';
+                        } else {
+                            // Plain text, escape LaTeX special characters
+                            processedAnswer = escapeLaTeX(processedAnswer);
+                        }
+                        
+                        latex += '\\item ' + processedAnswer + '\n';
+                    }
+                }
+                
+                latex += '\\end{enumerate}\n';
+            }
+            
+            latex += '\n';
+        });
+        
+        latex += '\\end{enumerate}\n';
+        latex += '\n';
+        
+        // Footer
+        latex += '\\vspace{1cm}\n';
+        latex += '\\begin{center}\n';
+        latex += '\\textbf{--- HẾT ---}\n';
+        latex += '\\end{center}\n';
+        latex += '\n';
+        
+        // End document
+        latex += '\\end{document}\n';
+        
+        return latex;
+    }
+    
+    // Hàm hiển thị modal xuất LaTeX
+    function showLaTeXModal() {
+        // Kiểm tra có câu hỏi không
+        if (!examQuestions || examQuestions.length === 0) {
+            alert('Không có câu hỏi nào trong đề thi. Vui lòng thêm câu hỏi trước khi xuất.');
+            return;
+        }
+        
+        // Lấy thông tin đề thi
+        const examInfo = getExamInfo();
+        
+        // Tạo LaTeX code
+        const latexCode = generateLaTeX(examInfo);
+        
+        // Hiển thị code trong textarea
+        const textarea = document.getElementById('latex-code-preview');
+        if (textarea) {
+            textarea.value = latexCode;
+            // Scroll to top
+            textarea.scrollTop = 0;
+        }
+        
+        // Hiển thị modal
+        const modal = document.getElementById('latex-export-modal');
+        if (modal) {
+            // Thay đổi từ hidden sang flex để hiển thị
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+    }
+    
+    // Hàm đóng modal
+    function closeLaTeXModal() {
+        const modal = document.getElementById('latex-export-modal');
+        if (modal) {
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+    }
+    
+    // Hàm download file .tex
+    function downloadLaTeXFile() {
+        const textarea = document.getElementById('latex-code-preview');
+        if (!textarea || !textarea.value) {
+            alert('Không có LaTeX code để download.');
+            return;
+        }
+        
+        // Lấy tên đề thi để đặt tên file
+        const examInfo = getExamInfo();
+        let filename = examInfo.title || 'de-thi';
+        
+        // Clean filename: loại bỏ ký tự đặc biệt, thay thế khoảng trắng bằng dấu gạch dưới
+        filename = filename
+            .replace(/[^a-zA-Z0-9\s\-_]/g, '') // Loại bỏ ký tự đặc biệt
+            .replace(/\s+/g, '_') // Thay khoảng trắng bằng dấu gạch dưới
+            .toLowerCase(); // Chuyển thành chữ thường
+        
+        // Đảm bảo có extension .tex
+        if (!filename.endsWith('.tex')) {
+            filename += '.tex';
+        }
+        
+        // Tạo Blob với LaTeX code
+        const blob = new Blob([textarea.value], { type: 'text/plain;charset=utf-8' });
+        
+        // Tạo URL object
+        const url = URL.createObjectURL(blob);
+        
+        // Tạo link tạm để download
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        link.style.display = 'none';
+        
+        // Thêm vào DOM, click, và xóa
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Giải phóng URL object
+        URL.revokeObjectURL(url);
+        
+        // Thông báo thành công
+        console.log('Đã download file:', filename);
+    }
+    
+    // Hàm copy LaTeX code vào clipboard
+    function copyLaTeXToClipboard() {
+        const textarea = document.getElementById('latex-code-preview');
+        if (!textarea || !textarea.value) {
+            alert('Không có LaTeX code để copy.');
+            return;
+        }
+        
+        // Copy text vào clipboard
+        textarea.select();
+        textarea.setSelectionRange(0, 99999); // Cho mobile
+        
+        try {
+            // Sử dụng Clipboard API nếu có
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(textarea.value).then(function() {
+                    // Thông báo thành công
+                    const copyBtn = document.getElementById('copy-latex-btn');
+                    if (copyBtn) {
+                        const originalText = copyBtn.innerHTML;
+                        copyBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">check</span> Đã copy!';
+                        copyBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                        copyBtn.classList.add('bg-green-500');
+                        
+                        setTimeout(function() {
+                            copyBtn.innerHTML = originalText;
+                            copyBtn.classList.remove('bg-green-500');
+                            copyBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+                        }, 2000);
+                    }
+                    console.log('Đã copy LaTeX code vào clipboard');
+                }).catch(function(err) {
+                    console.error('Lỗi khi copy:', err);
+                    // Fallback: dùng document.execCommand
+                    fallbackCopy();
+                });
+            } else {
+                // Fallback: dùng document.execCommand
+                fallbackCopy();
+            }
+        } catch (err) {
+            console.error('Lỗi khi copy:', err);
+            fallbackCopy();
+        }
+        
+        function fallbackCopy() {
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    alert('Đã copy LaTeX code vào clipboard!');
+                } else {
+                    alert('Không thể copy. Vui lòng chọn và copy thủ công.');
+                }
+            } catch (err) {
+                console.error('Fallback copy failed:', err);
+                alert('Không thể copy. Vui lòng chọn và copy thủ công.');
+            }
+        }
+    }
+</script>
+</body></html>

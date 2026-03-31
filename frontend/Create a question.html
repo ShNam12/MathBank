@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sinh câu hỏi từ Template - MathBank Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;family=Noto+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "surface-dark": "#1e2736",
+                        "border-dark": "#232f48",
+                        "text-secondary": "#92a4c9",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "body": ["Noto Sans", "sans-serif"],
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for dark mode */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111722; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #232f48; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #374151; 
+        }
+        .math-font {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+        }
+        /* Popover styles for chapters and sections */
+        .filter-popover {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: 4px;
+            min-width: 200px;
+            max-width: 300px;
+            max-height: 300px;
+            overflow-y: auto;
+            background: #1e2736;
+            border: 1px solid #232f48;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            display: none;
+        }
+        .filter-popover.show {
+            display: block;
+        }
+        .filter-popover-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border-bottom: 1px solid #232f48;
+        }
+        .filter-popover-item:last-child {
+            border-bottom: none;
+        }
+        .filter-popover-item:hover {
+            background-color: #232f48;
+        }
+        .filter-popover-item.active {
+            background-color: #135bec;
+            color: white;
+        }
+        .filter-popover-header {
+            padding: 8px 12px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #92a4c9;
+            border-bottom: 1px solid #232f48;
+            background-color: #111722;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-hidden h-screen flex flex-col">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-border-dark bg-[#111722] px-6 py-3 shrink-0">
+<div class="flex items-center gap-4 text-white">
+<div class="size-8 flex items-center justify-center bg-primary rounded-lg text-white">
+<span class="material-symbols-outlined">calculate</span>
+</div>
+<h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em]">MathBank Admin</h2>
+</div>
+<div class="flex flex-1 justify-end gap-8">
+<div class="flex items-center gap-6 hidden md:flex">
+<a class="text-text-secondary hover:text-white text-sm font-medium transition-colors" href="dashboard.html">Dashboard</a>
+<a class="text-white text-sm font-medium border-b-2 border-primary pb-0.5" href="#">Ngân hàng câu hỏi</a>
+<a class="text-text-secondary hover:text-white text-sm font-medium transition-colors" href="assignment.html">Đề thi</a>
+<a class="text-text-secondary hover:text-white text-sm font-medium transition-colors" href="#">Người dùng</a>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center justify-center size-8 rounded-full bg-border-dark text-text-secondary hover:text-white">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-9 border border-border-dark" data-alt="User avatar placeholder with abstract gradient" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBsx5dLYhifyamiiRHZxkWDsSc74DZdvdiPguyXImXL5i-aMin-krdczmjzuqI8S5-oFB49gAt_vjWyslqH6zxHOExtX1G9C1QVxgdL0LeOLuU4iMOCEbY0Z2chCs80fUmCBgqUBOQlDTW41yHZbZ6Cj1RzpuoE8Ek515ipCw0tGeoPALfrwy6Cv-o-4UxaTnI5XHG6O4mCbrzC8CwS-Sd8S9se5jz7uTgsEyTEaXzP6HWmt67CppnLHNBu2dq4zLts_MkjBF0k-w");'></div>
+</div>
+</div>
+</header>
+<!-- Main Content Layout -->
+<div class="flex flex-1 overflow-hidden">
+<!-- Left Sidebar: Template Selection -->
+<aside class="w-[380px] flex flex-col border-r border-border-dark bg-[#111722] shrink-0">
+<!-- Search & Filter Header -->
+<div class="p-4 border-b border-border-dark flex flex-col gap-3">
+<h3 class="text-white font-semibold text-sm uppercase tracking-wider mb-1">Thư viện Template</h3>
+<!-- Search Bar -->
+<div class="relative w-full">
+<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-text-secondary">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="bg-surface-dark border border-border-dark text-white text-sm rounded-lg block w-full pl-10 p-2.5 focus:ring-primary focus:border-primary placeholder-text-secondary" placeholder="Tìm kiếm template..." type="text"/>
+</div>
+<!-- Filter: Subjects/Chapters/Sections -->
+<div id="filter-container" class="flex flex-wrap gap-2 pb-1">
+<button id="filter-all" class="px-3 py-1 rounded-full bg-primary text-white text-xs font-medium whitespace-nowrap transition-colors">Tất cả</button>
+<!-- Subjects will be rendered here dynamically -->
+</div>
+</div>
+<!-- Template List -->
+<div id="template-list" class="flex-1 overflow-y-auto p-2 space-y-2">
+<!-- Templates will be rendered here dynamically -->
+<div class="text-center text-text-secondary py-8">
+<span class="material-symbols-outlined animate-spin">sync</span>
+<p class="mt-2">Đang tải templates...</p>
+</div>
+</div>
+</aside>
+<!-- Right Main Content -->
+<main class="flex-1 flex flex-col min-w-0 bg-[#111722] overflow-hidden">
+<!-- Breadcrumbs & Heading -->
+<div class="px-8 pt-6 pb-2 shrink-0">
+<nav class="flex items-center gap-2 text-sm text-text-secondary mb-4">
+<a class="hover:text-white" href="#">Trang chủ</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<a class="hover:text-white" href="#">Ngân hàng câu hỏi</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-white font-medium">Sinh câu hỏi</span>
+</nav>
+<div class="flex justify-between items-end">
+<div>
+<h1 class="text-3xl font-bold text-white tracking-tight mb-2">Sinh câu hỏi từ Template</h1>
+<p class="text-text-secondary">Cấu hình tham số và sinh câu hỏi hàng loạt cho <span class="text-white font-semibold">2 template</span> đã chọn.</p>
+</div>
+<div class="flex gap-3">
+<button class="px-4 py-2 bg-surface-dark border border-border-dark text-white rounded-lg text-sm font-medium hover:bg-[#2a3649] transition flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">history</span>
+                            Lịch sử
+                        </button>
+<button class="px-4 py-2 bg-surface-dark border border-border-dark text-white rounded-lg text-sm font-medium hover:bg-[#2a3649] transition flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">description</span>
+                            Hướng dẫn
+                        </button>
+</div>
+</div>
+</div>
+<!-- Configuration Zone -->
+<div class="flex-1 overflow-y-auto px-8 py-6 space-y-6">
+<!-- Setup Card -->
+<div class="bg-surface-dark border border-border-dark rounded-xl p-6 shadow-sm">
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">tune</span>
+</div>
+<div>
+<h3 class="text-white font-semibold text-lg">Cấu hình tham số chung</h3>
+<p class="text-text-secondary text-sm">Áp dụng cho tất cả các mẫu đang chọn</p>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Quantity Input -->
+<div class="flex flex-col gap-2">
+<label class="text-white text-sm font-medium">Số lượng câu hỏi (mỗi loại)</label>
+<div class="relative">
+<input class="bg-[#111722] border border-border-dark text-white text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5" placeholder="Ví dụ: 50" type="number" value="20"/>
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-text-secondary text-xs">
+                                    câu
+                                </div>
+</div>
+</div>
+<!-- Difficulty Select -->
+<div class="flex flex-col gap-2">
+<label class="text-white text-sm font-medium">Độ khó mong muốn</label>
+<select class="bg-[#111722] border border-border-dark text-white text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
+<option>Ngẫu nhiên</option>
+<option>Dễ (Nhận biết)</option>
+<option selected="">Trung bình (Thông hiểu)</option>
+<option>Khó (Vận dụng)</option>
+<option>Rất khó (Vận dụng cao)</option>
+</select>
+</div>
+<!-- Param Range -->
+<div class="flex flex-col gap-2">
+<label class="text-white text-sm font-medium">Phạm vi giá trị số</label>
+<div class="flex items-center gap-2">
+<input class="bg-[#111722] border border-border-dark text-white text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 text-center" placeholder="Min" type="number" value="-10"/>
+<span class="text-text-secondary">-</span>
+<input class="bg-[#111722] border border-border-dark text-white text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 text-center" placeholder="Max" type="number" value="10"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Progress & Action Section -->
+<div class="border-t border-border-dark pt-6 mt-8">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-white font-semibold">Kết quả sinh mẫu (Preview)</h3>
+<div class="flex gap-3">
+<button id="btn-clear-results" class="px-4 py-2 rounded-lg text-sm font-medium text-white hover:bg-surface-dark border border-transparent hover:border-border-dark transition">
+                                 Xóa kết quả
+                             </button>
+<button id="btn-generate" class="px-6 py-2 bg-primary hover:bg-blue-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-blue-500/20 flex items-center gap-2 transition-transform active:scale-95">
+<span class="material-symbols-outlined">auto_awesome</span>
+                                 <span id="btn-generate-text">Sinh câu hỏi</span>
+                             </button>
+</div>
+</div>
+<!-- Progress Bar (Visible during generating) -->
+<div id="progress-bar" class="mb-6 bg-surface-dark p-4 rounded-lg border border-border-dark flex items-center gap-4 hidden">
+<div class="flex items-center justify-center size-10 rounded-full bg-green-500/20 text-green-500">
+<span class="material-symbols-outlined animate-spin">sync</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between mb-1">
+<span id="progress-text" class="text-sm font-medium text-white">Đang xử lý...</span>
+<span id="progress-percent" class="text-sm font-medium text-green-400">0%</span>
+</div>
+<div class="w-full bg-gray-700 rounded-full h-2">
+<div id="progress-fill" class="bg-green-500 h-2 rounded-full transition-all" style="width: 0%"></div>
+</div>
+</div>
+<button id="btn-close-progress" class="text-text-secondary hover:text-white">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Results List -->
+<div id="results-container" class="space-y-4 pb-10">
+<!-- Results will be rendered here dynamically -->
+</div>
+</div>
+</main>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const API_URL = "http://127.0.0.1:5000/api";
+        const btnGenerate = document.getElementById('btn-generate');
+        const btnGenerateText = document.getElementById('btn-generate-text');
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const progressPercent = document.getElementById('progress-percent');
+        const progressFill = document.getElementById('progress-fill');
+        const btnCloseProgress = document.getElementById('btn-close-progress');
+        const resultsContainer = document.getElementById('results-container');
+        const templateListContainer = document.getElementById('template-list');
+        const searchInput = document.querySelector('input[placeholder="Tìm kiếm template..."]');
+        
+        // Lấy danh sách template và render
+        let templates = [];
+        let selectedTemplateIds = new Set(); // Set để lưu các template đã chọn
+        let filteredTemplates = [];
+        
+        // Filter state
+        let allSubjects = [];
+        let subjectChapters = {}; // Cache: subject_id -> chapters
+        let chapterSections = {}; // Cache: chapter_id -> sections
+        let selectedSubjectId = null;
+        let selectedChapterId = null;
+        let selectedSectionId = null;
+        let openPopoverId = null; // Track which popover is open
+        
+        // Load templates từ API (return Promise để chain)
+        function loadTemplates() {
+            return fetch(`${API_URL}/templates/list`)
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error(`HTTP error! status: ${res.status}`);
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    if (Array.isArray(data)) {
+                        templates = data;
+                        filteredTemplates = templates;
+                        renderTemplates();
+                        updateSelectedCount();
+                        return Promise.resolve(); // Return để chain với loadSubjects()
+                    } else if (data.error) {
+                        console.error("Lỗi API:", data.error);
+                        if (templateListContainer) {
+                            templateListContainer.innerHTML = '<div class="text-center text-text-secondary py-8">Lỗi tải templates: ' + escapeHtml(data.error) + '</div>';
+                        }
+                        return Promise.reject(data.error);
+                    }
+                })
+                .catch(err => {
+                    console.error("Lỗi tải templates:", err);
+                    if (templateListContainer) {
+                        templateListContainer.innerHTML = '<div class="text-center text-text-secondary py-8"><span class="material-symbols-outlined text-red-500">error</span><p class="mt-2 text-red-400">Lỗi kết nối server!</p></div>';
+                    }
+                    return Promise.reject(err);
+                });
+        }
+        
+        // Render danh sách templates
+        function renderTemplates() {
+            if (!templateListContainer) return;
+            
+            if (filteredTemplates.length === 0) {
+                templateListContainer.innerHTML = '<div class="text-center text-text-secondary py-8">Không tìm thấy template nào.</div>';
+                return;
+            }
+            
+            templateListContainer.innerHTML = '';
+            
+            filteredTemplates.forEach(template => {
+                const isSelected = selectedTemplateIds.has(template.id);
+                const gradeTag = extractGradeFromTags(template.tags);
+                const previewFormula = template.math_formula || template.question_template || '';
+                
+                const templateCard = document.createElement('div');
+                templateCard.className = `group relative flex flex-col gap-2 p-3 rounded-lg ${isSelected ? 'bg-surface-dark border border-primary' : 'bg-[#111722] border border-border-dark hover:bg-surface-dark hover:border-gray-600'} cursor-pointer transition-all`;
+                templateCard.dataset.templateId = template.id;
+                
+                templateCard.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div class="flex items-center gap-3">
+                            <div class="flex items-center justify-center size-5 rounded ${isSelected ? 'bg-primary text-white' : 'border border-text-secondary/50 group-hover:border-white'}" data-checkbox>
+                                ${isSelected ? '<span class="material-symbols-outlined text-[16px]">check</span>' : ''}
+                            </div>
+                            <span class="text-xs font-bold ${isSelected ? 'text-primary bg-primary/10' : 'text-text-secondary bg-surface-dark'} px-2 py-0.5 rounded">${gradeTag}</span>
+                        </div>
+                        <span class="material-symbols-outlined text-text-secondary hover:text-white">info</span>
+                    </div>
+                    <div>
+                        <h4 class="text-white text-sm font-semibold mb-1">${escapeHtml(template.name)}</h4>
+                        <p class="text-text-secondary text-xs line-clamp-2">${escapeHtml(template.description || 'Không có mô tả')}</p>
+                    </div>
+                    ${previewFormula ? `
+                    <div class="mt-2 p-2 bg-background-dark rounded border border-border-dark">
+                        <p class="text-gray-300 text-xs font-mono text-center">${escapeHtml(previewFormula)}</p>
+                    </div>
+                    ` : ''}
+                `;
+                
+                // Xử lý click để chọn/bỏ chọn
+                templateCard.addEventListener('click', function(e) {
+                    // Không toggle nếu click vào icon info
+                    if (e.target.closest('.material-symbols-outlined:not([data-checkbox])')) {
+                        return;
+                    }
+                    toggleTemplateSelection(template.id);
+                });
+                
+                templateListContainer.appendChild(templateCard);
+            });
+        }
+        
+        // Toggle selection của template
+        function toggleTemplateSelection(templateId) {
+            if (selectedTemplateIds.has(templateId)) {
+                selectedTemplateIds.delete(templateId);
+            } else {
+                selectedTemplateIds.add(templateId);
+            }
+            renderTemplates();
+            updateSelectedCount();
+        }
+        
+        // Extract grade từ tags (ví dụ: "Lớp 12" từ tags)
+        function extractGradeFromTags(tags) {
+            if (!tags || !Array.isArray(tags)) return 'N/A';
+            // Tìm tag chứa "Lớp" hoặc "Grade"
+            const gradeTag = tags.find(tag => /lớp|grade|class/i.test(tag));
+            if (gradeTag) {
+                const match = gradeTag.match(/(\d+)/);
+                if (match) return `Lớp ${match[1]}`;
+                return gradeTag;
+            }
+            // Nếu không tìm thấy, trả về tag đầu tiên hoặc "N/A"
+            return tags[0] || 'N/A';
+        }
+        
+        // Escape HTML để tránh XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Cập nhật số lượng template đã chọn
+        function updateSelectedCount() {
+            const subtitle = document.querySelector('main p.text-text-secondary');
+            if (subtitle) {
+                const count = selectedTemplateIds.size;
+                subtitle.innerHTML = `Cấu hình tham số và sinh câu hỏi hàng loạt cho <span class="text-white font-semibold">${count} template</span> đã chọn.`;
+            }
+        }
+        
+        // ============================================================
+        // FILTER FUNCTIONS: Extract từ Tags thay vì API calls
+        // ============================================================
+        
+        // Extract subjects, chapters, sections từ tags của templates
+        function extractFilterDataFromTemplates(templates) {
+            const subjectsMap = {}; // {subjectName: {chapters: {...}, ...}}
+            
+            templates.forEach(template => {
+                if (!template.tags || template.tags.length === 0) return;
+                
+                // Parse tags để tìm subject, chapter, và tất cả sections
+                let subject = null;
+                let chapter = null;
+                const sections = []; // Mảng để lưu tất cả sections
+                
+                for (let tag of template.tags) {
+                    if (!tag || !tag.trim()) continue;
+                    tag = tag.trim();
+                    
+                    // Nếu tag bắt đầu bằng "Chương" -> đây là chapter
+                    if (tag.match(/^Chương\s+\d+/i)) {
+                        chapter = tag;
+                    }
+                    // Nếu chưa có subject và tag không phải chapter -> đây là subject
+                    else if (!subject) {
+                        subject = tag;
+                    }
+                    // Tag còn lại (không phải subject, không phải chapter) -> section
+                    else if (tag !== subject && tag !== chapter) {
+                        // Thêm vào mảng sections nếu chưa có
+                        if (!sections.includes(tag)) {
+                            sections.push(tag);
+                        }
+                    }
+                }
+                
+                // Nếu không tìm thấy subject, dùng tag đầu tiên
+                if (!subject && template.tags.length > 0) {
+                    subject = template.tags[0].trim();
+                }
+                
+                // Build data structure
+                if (subject) {
+                    if (!subjectsMap[subject]) {
+                        subjectsMap[subject] = {
+                            name: subject,
+                            chapters: {}
+                        };
+                    }
+                    
+                    if (chapter) {
+                        if (!subjectsMap[subject].chapters[chapter]) {
+                            subjectsMap[subject].chapters[chapter] = {
+                                name: chapter,
+                                sections: []
+                            };
+                        }
+                        
+                        // Thêm tất cả sections vào chapter
+                        sections.forEach(section => {
+                            if (!subjectsMap[subject].chapters[chapter].sections.includes(section)) {
+                                subjectsMap[subject].chapters[chapter].sections.push(section);
+                            }
+                        });
+                    }
+                }
+            });
+            
+            // Convert to arrays (format giống API response cũ)
+            const subjects = Object.values(subjectsMap).map(s => ({
+                id: s.name, // Dùng name làm ID (vì không có ID thật từ tags)
+                name: s.name,
+                chapters: Object.values(s.chapters).map(ch => ({
+                    id: ch.name,
+                    name: ch.name,
+                    sections: ch.sections.map(sec => ({
+                        id: sec,
+                        name: sec
+                    }))
+                }))
+            }));
+            
+            return { subjects, subjectsMap };
+        }
+        
+        // Load subjects từ tags của templates (THAY THẾ loadSubjects() cũ)
+        function loadSubjects() {
+            // Extract từ templates đã có
+            const { subjects } = extractFilterDataFromTemplates(templates);
+            allSubjects = subjects;
+            
+            // Cache chapters và sections để dùng sau
+            subjects.forEach(subject => {
+                subjectChapters[subject.id] = subject.chapters || [];
+                subject.chapters.forEach(chapter => {
+                    chapterSections[chapter.id] = chapter.sections || [];
+                });
+            });
+            
+            renderFilters();
+        }
+        
+        // Load chapters từ cache (THAY THẾ loadChapters() cũ)
+        function loadChapters(subjectId) {
+            // Lấy từ cache đã build trong loadSubjects()
+            if (subjectChapters[subjectId]) {
+                return Promise.resolve(subjectChapters[subjectId]);
+            }
+            return Promise.resolve([]);
+        }
+        
+        // Load sections từ cache (THAY THẾ loadSections() cũ)
+        function loadSections(chapterId) {
+            // Lấy từ cache đã build trong loadSubjects()
+            if (chapterSections[chapterId]) {
+                return Promise.resolve(chapterSections[chapterId]);
+            }
+            return Promise.resolve([]);
+        }
+        
+        // Render filter buttons
+        function renderFilters() {
+            const filterContainer = document.getElementById('filter-container');
+            if (!filterContainer) return;
+            
+            // Clear existing filters
+            filterContainer.innerHTML = '';
+            
+            // Create "Tất cả" button
+            const allBtn = document.createElement('button');
+            allBtn.id = 'filter-all';
+            allBtn.className = `px-3 py-1 rounded-full ${!selectedSubjectId ? 'bg-primary text-white' : 'bg-surface-dark border border-border-dark text-text-secondary hover:text-white hover:border-gray-500'} text-xs font-medium whitespace-nowrap transition-colors`;
+            allBtn.textContent = 'Tất cả';
+            allBtn.addEventListener('click', () => {
+                selectedSubjectId = null;
+                selectedChapterId = null;
+                selectedSectionId = null;
+                closeAllPopovers();
+                renderFilters();
+                applyFilters();
+            });
+            filterContainer.appendChild(allBtn);
+            
+            // Render subjects
+            allSubjects.forEach(subject => {
+                const subjectBtn = document.createElement('button');
+                subjectBtn.className = `px-3 py-1 rounded-full relative ${selectedSubjectId === subject.id ? 'bg-primary text-white' : 'bg-surface-dark border border-border-dark text-text-secondary hover:text-white hover:border-gray-500'} text-xs font-medium whitespace-nowrap transition-colors`;
+                subjectBtn.textContent = subject.name;
+                subjectBtn.dataset.subjectId = subject.id;
+                
+                // Create popover for chapters
+                const popover = document.createElement('div');
+                popover.className = 'filter-popover';
+                popover.id = `popover-subject-${subject.id}`;
+                popover.innerHTML = '<div class="filter-popover-header">Chương</div><div class="filter-popover-content"></div>';
+                
+                subjectBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (selectedSubjectId === subject.id) {
+                        // Deselect
+                        selectedSubjectId = null;
+                        selectedChapterId = null;
+                        selectedSectionId = null;
+                        closeAllPopovers();
+                        renderFilters();
+                        applyFilters();
+                    } else {
+                        // Select subject
+                        selectedSubjectId = subject.id;
+                        selectedChapterId = null;
+                        selectedSectionId = null;
+                        closeAllPopovers();
+                        renderFilters();
+                        // Show popover after render
+                        setTimeout(() => {
+                            const newPopover = document.getElementById(`popover-subject-${subject.id}`);
+                            if (newPopover) {
+                                showChaptersPopover(subject.id, newPopover);
+                            }
+                        }, 10);
+                        applyFilters();
+                    }
+                });
+                
+                subjectBtn.appendChild(popover);
+                filterContainer.appendChild(subjectBtn);
+            });
+            
+            // Render selected chapter if exists
+            if (selectedChapterId && selectedSubjectId) {
+                const chapters = subjectChapters[selectedSubjectId] || [];
+                const chapter = chapters.find(c => c.id === selectedChapterId);
+                if (chapter) {
+                    const chapterBtn = document.createElement('button');
+                    chapterBtn.className = 'px-3 py-1 rounded-full relative bg-primary/80 text-white text-xs font-medium whitespace-nowrap transition-colors';
+                    chapterBtn.textContent = `→ ${chapter.name}`;
+                    chapterBtn.dataset.chapterId = chapter.id;
+                    
+                    const popover = document.createElement('div');
+                    popover.className = 'filter-popover';
+                    popover.id = `popover-chapter-${chapter.id}`;
+                    popover.innerHTML = '<div class="filter-popover-header">Phần</div><div class="filter-popover-content"></div>';
+                    
+                    chapterBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (selectedChapterId === chapter.id) {
+                            // Deselect
+                            selectedChapterId = null;
+                            selectedSectionId = null;
+                            closeAllPopovers();
+                            renderFilters();
+                            applyFilters();
+                        } else {
+                            // Select chapter
+                            selectedChapterId = chapter.id;
+                            selectedSectionId = null;
+                            closeAllPopovers();
+                            renderFilters();
+                            // Show popover after render
+                            setTimeout(() => {
+                                const newPopover = document.getElementById(`popover-chapter-${chapter.id}`);
+                                if (newPopover) {
+                                    showSectionsPopover(chapter.id, newPopover);
+                                }
+                            }, 10);
+                            applyFilters();
+                        }
+                    });
+                    
+                    chapterBtn.appendChild(popover);
+                    filterContainer.appendChild(chapterBtn);
+                }
+            }
+            
+            // Render selected section if exists
+            if (selectedSectionId && selectedChapterId) {
+                const sections = chapterSections[selectedChapterId] || [];
+                const section = sections.find(s => s.id === selectedSectionId);
+                if (section) {
+                    const sectionBtn = document.createElement('button');
+                    sectionBtn.className = 'px-3 py-1 rounded-full bg-primary/60 text-white text-xs font-medium whitespace-nowrap transition-colors';
+                    sectionBtn.textContent = `→ ${section.name}`;
+                    sectionBtn.dataset.sectionId = section.id;
+                    
+                    sectionBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        selectedSectionId = null;
+                        closeAllPopovers();
+                        renderFilters();
+                        applyFilters();
+                    });
+                    
+                    filterContainer.appendChild(sectionBtn);
+                }
+            }
+        }
+        
+        function showChaptersPopover(subjectId, popover) {
+            const content = popover.querySelector('.filter-popover-content');
+            content.innerHTML = '<div class="p-2 text-text-secondary text-xs">Đang tải...</div>';
+            popover.classList.add('show');
+            openPopoverId = `popover-subject-${subjectId}`;
+            
+            loadChapters(subjectId).then(chapters => {
+                if (chapters.length === 0) {
+                    content.innerHTML = '<div class="p-2 text-text-secondary text-xs">Không có chương</div>';
+                    return;
+                }
+                
+                content.innerHTML = '';
+                chapters.forEach(chapter => {
+                    const item = document.createElement('div');
+                    item.className = `filter-popover-item ${selectedChapterId === chapter.id ? 'active' : ''}`;
+                    item.textContent = chapter.name;
+                    item.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        selectedChapterId = chapter.id;
+                        selectedSectionId = null;
+                        closeAllPopovers();
+                        renderFilters();
+                        applyFilters();
+                    });
+                    content.appendChild(item);
+                });
+            });
+        }
+        
+        function showSectionsPopover(chapterId, popover) {
+            const content = popover.querySelector('.filter-popover-content');
+            content.innerHTML = '<div class="p-2 text-text-secondary text-xs">Đang tải...</div>';
+            popover.classList.add('show');
+            openPopoverId = `popover-chapter-${chapterId}`;
+            
+            loadSections(chapterId).then(sections => {
+                if (sections.length === 0) {
+                    content.innerHTML = '<div class="p-2 text-text-secondary text-xs">Không có phần</div>';
+                    return;
+                }
+                
+                content.innerHTML = '';
+                sections.forEach(section => {
+                    const item = document.createElement('div');
+                    item.className = `filter-popover-item ${selectedSectionId === section.id ? 'active' : ''}`;
+                    item.textContent = section.name;
+                    item.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        selectedSectionId = section.id;
+                        closeAllPopovers();
+                        renderFilters();
+                        applyFilters();
+                    });
+                    content.appendChild(item);
+                });
+            });
+        }
+        
+        function closeAllPopovers() {
+            document.querySelectorAll('.filter-popover').forEach(p => {
+                p.classList.remove('show');
+            });
+            openPopoverId = null;
+        }
+        
+        // Close popovers when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.filter-popover') && !e.target.closest('button[data-subject-id]') && !e.target.closest('button[data-chapter-id]')) {
+                closeAllPopovers();
+            }
+        });
+        
+        // Xử lý search
+        if (searchInput) {
+            searchInput.addEventListener('input', function(e) {
+                applyFilters();
+            });
+        }
+        
+        // Filter templates theo keyword và filter (subject/chapter/section)
+        function applyFilters() {
+            const keyword = searchInput ? searchInput.value.toLowerCase().trim() : '';
+            
+            // Tất cả data đã được cache trong loadSubjects(), không cần load thêm
+            performFilter(keyword);
+        }
+        
+        function performFilter(keyword) {
+            filteredTemplates = templates.filter(template => {
+                // Filter theo keyword (giữ nguyên)
+                const matchKeyword = !keyword || 
+                    (template.name && template.name.toLowerCase().includes(keyword)) ||
+                    (template.description && template.description.toLowerCase().includes(keyword)) ||
+                    (template.code && template.code.toLowerCase().includes(keyword));
+                
+                if (!matchKeyword) {
+                    return false;
+                }
+                
+                // Filter theo tags (THAY ĐỔI - không dùng category_id/subject_id nữa)
+                // Nếu không có filter nào được chọn, hiển thị tất cả
+                if (!selectedSubjectId && !selectedChapterId && !selectedSectionId) {
+                    return true;
+                }
+                
+                // Template không có tags thì không match
+                if (!template.tags || template.tags.length === 0) {
+                    return false;
+                }
+                
+                // Lọc theo section (ưu tiên cao nhất)
+                if (selectedSectionId) {
+                    return template.tags.includes(selectedSectionId);
+                }
+                
+                // Lọc theo chapter
+                if (selectedChapterId) {
+                    return template.tags.includes(selectedChapterId);
+                }
+                
+                // Lọc theo subject
+                if (selectedSubjectId) {
+                    // Subject thường là tag đầu tiên, hoặc có thể ở bất kỳ vị trí nào
+                    return template.tags[0] === selectedSubjectId || 
+                           template.tags.includes(selectedSubjectId);
+                }
+                
+                return true;
+            });
+            
+            renderTemplates();
+        }
+        
+        // Load templates TRƯỚC, sau đó extract filter data từ tags
+        loadTemplates().then(() => {
+            // Sau khi load templates xong, extract filter data
+            loadSubjects(); // Bây giờ dùng data từ templates
+        }).catch(err => {
+            console.error("Lỗi khi load templates:", err);
+            // Vẫn render filters với empty data
+            allSubjects = [];
+            renderFilters();
+        });
+        
+        // ============================================================
+        // HÀM HELPER: Retry với exponential backoff
+        // ============================================================
+        async function fetchWithRetry(url, options, maxRetries = 3, baseDelay = 1000) {
+            let lastError;
+            
+            for (let attempt = 0; attempt < maxRetries; attempt++) {
+                try {
+                    const response = await fetch(url, options);
+                    
+                    // Nếu là lỗi server (5xx), retry
+                    if (response.status >= 500 && attempt < maxRetries - 1) {
+                        const delay = baseDelay * Math.pow(2, attempt);
+                        console.log(`[RETRY] Server error ${response.status}, retrying in ${delay}ms... (attempt ${attempt + 1}/${maxRetries})`);
+                        progressText.textContent = `Lỗi server, đang thử lại... (${attempt + 1}/${maxRetries})`;
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        continue;
+                    }
+                    
+                    return response;
+                } catch (error) {
+                    lastError = error;
+                    
+                    // Chỉ retry cho network errors, không retry cho AbortError
+                    if (error.name === 'AbortError') {
+                        throw error;
+                    }
+                    
+                    // Nếu không phải lần thử cuối, retry
+                    if (attempt < maxRetries - 1) {
+                        const delay = baseDelay * Math.pow(2, attempt);
+                        console.log(`[RETRY] Network error, retrying in ${delay}ms... (attempt ${attempt + 1}/${maxRetries})`);
+                        progressText.textContent = `Lỗi kết nối, đang thử lại... (${attempt + 1}/${maxRetries})`;
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                    }
+                }
+            }
+            
+            throw lastError;
+        }
+        
+        // ============================================================
+        // HÀM HELPER: Phân loại và xử lý lỗi
+        // ============================================================
+        function handleError(err, timeoutDuration) {
+            let errorType = 'unknown';
+            let errorMessage = '';
+            let userMessage = '';
+            
+            if (err.name === 'AbortError') {
+                errorType = 'timeout';
+                errorMessage = `Request timeout sau ${timeoutDuration / 60000} phút`;
+                userMessage = `Yêu cầu bị timeout sau ${timeoutDuration / 60000} phút.\n\n` +
+                    `Có thể backend vẫn đang xử lý. Vui lòng:\n` +
+                    `- Kiểm tra lại sau vài phút\n` +
+                    `- Thử lại với số lượng câu hỏi ít hơn\n` +
+                    `- Kiểm tra kết nối mạng`;
+            } else if (err.message && err.message.includes('Failed to fetch')) {
+                errorType = 'network';
+                errorMessage = 'Network connection failed';
+                userMessage = `Lỗi kết nối mạng!\n\n` +
+                    `Có thể do:\n` +
+                    `- Mất kết nối internet\n` +
+                    `- Server không phản hồi\n` +
+                    `- Firewall chặn kết nối\n\n` +
+                    `Vui lòng kiểm tra kết nối và thử lại.`;
+            } else if (err.message && err.message.includes('HTTP error')) {
+                errorType = 'http';
+                const statusMatch = err.message.match(/status: (\d+)/);
+                const status = statusMatch ? statusMatch[1] : 'unknown';
+                errorMessage = `HTTP ${status}`;
+                
+                if (status >= 500) {
+                    userMessage = `Lỗi server (${status})!\n\n` +
+                        `Server đang gặp sự cố. Vui lòng thử lại sau.`;
+                } else if (status === 429) {
+                    userMessage = `Quá nhiều yêu cầu (${status})!\n\n` +
+                        `Vui lòng đợi một chút và thử lại.`;
+                } else {
+                    userMessage = `Lỗi HTTP ${status}!\n\n` +
+                        `${err.message}`;
+                }
+            } else {
+                errorType = 'unknown';
+                errorMessage = err.message || 'Unknown error';
+                userMessage = `Lỗi không xác định!\n\n` +
+                    `${errorMessage}\n\n` +
+                    `Vui lòng thử lại hoặc liên hệ hỗ trợ.`;
+            }
+            
+            console.error(`[ERROR] Type: ${errorType}, Message: ${errorMessage}`, err);
+            return { errorType, errorMessage, userMessage };
+        }
+        
+        // Xử lý nút sinh câu hỏi
+        if (btnGenerate) {
+            btnGenerate.addEventListener('click', async function() {
+                // Lấy các template đã chọn
+                const selectedIds = Array.from(selectedTemplateIds);
+                
+                if (selectedIds.length === 0) {
+                    alert("Vui lòng chọn ít nhất một template!");
+                    return;
+                }
+                
+                // Lấy số lượng câu hỏi
+                const quantityInput = document.querySelector('input[type="number"][placeholder="Ví dụ: 50"]');
+                const quantity = quantityInput ? parseInt(quantityInput.value) || 20 : 20;
+                
+                // Lấy độ khó
+                const difficultySelect = document.querySelector('select option:checked');
+                const difficulty = difficultySelect ? difficultySelect.textContent : 'Ngẫu nhiên';
+                
+                // Lấy phạm vi giá trị số
+                const minValueInput = document.querySelector('input[type="number"][placeholder="Min"]');
+                const maxValueInput = document.querySelector('input[type="number"][placeholder="Max"]');
+                const minValue = minValueInput ? parseInt(minValueInput.value) || -10 : -10;
+                const maxValue = maxValueInput ? parseInt(maxValueInput.value) || 10 : 10;
+                
+                // Tính toán timeout dựa trên số lượng câu hỏi (15 phút = 900 giây)
+                // Ước tính: mỗi câu hỏi ~5-10 giây, thêm buffer
+                const estimatedTime = Math.max(900000, quantity * selectedIds.length * 10000); // Tối thiểu 15 phút
+                const timeoutDuration = Math.min(estimatedTime, 1800000); // Tối đa 30 phút
+                
+                // Hiển thị progress bar
+                progressBar.classList.remove('hidden');
+                progressText.textContent = 'Đang sinh câu hỏi...';
+                progressPercent.textContent = '0%';
+                progressFill.style.width = '0%';
+                btnGenerate.disabled = true;
+                btnGenerateText.textContent = 'Đang xử lý...';
+                
+                // Tạo AbortController với timeout động
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => {
+                    controller.abort();
+                    console.log(`[TIMEOUT] Request timeout after ${timeoutDuration / 1000} seconds`);
+                }, timeoutDuration);
+                
+                // Cập nhật progress text với thời gian ước tính
+                let progressUpdateInterval = setInterval(() => {
+                    const currentText = progressText.textContent;
+                    if (currentText.includes('...')) {
+                        progressText.textContent = currentText.replace(/\.+$/, '');
+                    } else {
+                        progressText.textContent = currentText + '.';
+                    }
+                }, 1000);
+                
+                // Gọi API với retry mechanism
+                try {
+                    const requestBody = {
+                        template_ids: selectedIds,
+                        quantity: quantity,
+                        difficulty: difficulty,
+                        min_value: minValue,
+                        max_value: maxValue
+                    };
+                    
+                    const response = await fetchWithRetry(
+                        `${API_URL}/generate-questions`,
+                        {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(requestBody),
+                            signal: controller.signal
+                        },
+                        3, // maxRetries
+                        2000 // baseDelay (2 giây)
+                    );
+                    
+                    clearTimeout(timeoutId);
+                    clearInterval(progressUpdateInterval);
+                    
+                    if (!response.ok) {
+                        // Thử parse error message từ response
+                        let errorData = {};
+                        try {
+                            errorData = await response.json();
+                        } catch (e) {
+                            // Không thể parse JSON, dùng status text
+                        }
+                        throw new Error(`HTTP error! status: ${response.status} - ${errorData.error || response.statusText}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    // Debug: Log response để kiểm tra
+                    console.log('API Response:', data);
+                    
+                    if (data.error) {
+                        progressBar.classList.add('hidden');
+                        btnGenerate.disabled = false;
+                        btnGenerateText.textContent = 'Sinh câu hỏi';
+                        alert("Lỗi từ server: " + data.error);
+                        return;
+                    }
+                    
+                    // Kiểm tra và render kết quả
+                    const questions = data.questions || [];
+                    console.log('Questions to render:', questions);
+                    
+                    progressBar.classList.add('hidden');
+                    btnGenerate.disabled = false;
+                    btnGenerateText.textContent = 'Sinh câu hỏi';
+                    
+                    if (questions.length > 0) {
+                        // Render kết quả
+                        renderQuestions(questions);
+                        
+                        // Hiển thị thông báo thành công với thông tin chi tiết
+                        const stats = data.stats || {};
+                        let successMessage = `Đã sinh thành công ${questions.length} câu hỏi!`;
+                        if (stats.failed > 0 || stats.duplicate > 0 || stats.low_quality > 0) {
+                            successMessage += `\n\nThống kê:\n`;
+                            if (stats.failed > 0) successMessage += `- Thất bại: ${stats.failed}\n`;
+                            if (stats.duplicate > 0) successMessage += `- Trùng lặp: ${stats.duplicate}\n`;
+                            if (stats.low_quality > 0) successMessage += `- Chất lượng thấp: ${stats.low_quality}\n`;
+                        }
+                        if (data.warnings && data.warnings.length > 0) {
+                            successMessage += `\nCảnh báo: ${data.warnings.length} cảnh báo`;
+                        }
+                        
+                        progressText.textContent = successMessage;
+                        progressBar.classList.remove('hidden');
+                        setTimeout(() => {
+                            progressBar.classList.add('hidden');
+                        }, 5000);
+                    } else {
+                        alert("Không có câu hỏi nào được sinh ra. Vui lòng kiểm tra lại template và tham số.");
+                    }
+                } catch (err) {
+                    clearTimeout(timeoutId);
+                    clearInterval(progressUpdateInterval);
+                    
+                    const errorInfo = handleError(err, timeoutDuration);
+                    console.error("Lỗi:", errorInfo, err);
+                    
+                    progressBar.classList.add('hidden');
+                    btnGenerate.disabled = false;
+                    btnGenerateText.textContent = 'Sinh câu hỏi';
+                    
+                    // Hiển thị thông báo lỗi chi tiết
+                    alert(errorInfo.userMessage);
+                }
+            });
+        }
+        
+        // Xử lý nút đóng progress
+        if (btnCloseProgress) {
+            btnCloseProgress.addEventListener('click', function() {
+                progressBar.classList.add('hidden');
+            });
+        }
+        
+        // Hàm render câu hỏi - Cải thiện format hiển thị
+        function renderQuestions(questions) {
+            if (!resultsContainer) {
+                console.error('resultsContainer not found!');
+                return;
+            }
+            
+            // Xóa tất cả nội dung cũ
+            resultsContainer.innerHTML = '';
+            
+            // Nếu không có câu hỏi, không hiển thị gì (ẩn hoàn toàn)
+            if (!questions || questions.length === 0) {
+                console.log('No questions to render');
+                return;
+            }
+            
+            console.log(`Rendering ${questions.length} questions`);
+            
+            // Render từng câu hỏi
+            questions.forEach((q, index) => {
+                // Lấy question_text từ q.question_text hoặc q.content (API trả về "content")
+                const questionText = q.question_text || q.content || '';
+                
+                if (!questionText) {
+                    console.warn(`Question ${index + 1} has no text:`, q);
+                }
+                
+                // Lấy answers từ q.answers (đã là dict từ API)
+                const answers = q.answers || {};
+                
+                // Debug: Log để kiểm tra
+                if (index === 0) {
+                    console.log('Sample question:', {
+                        questionText,
+                        answers,
+                        correct_answer: q.correct_answer
+                    });
+                }
+                
+                // Tìm đáp án đúng từ answers hoặc correct_answer
+                let correctAnswerKey = q.correct_answer || null;
+                if (!correctAnswerKey) {
+                    Object.entries(answers).forEach(([key, ans]) => {
+                        if (ans && (ans.is_correct === true || ans.is_correct === 'true')) {
+                            correctAnswerKey = key;
+                        }
+                    });
+                }
+                
+                // Đảm bảo có ít nhất 1 đáp án
+                if (Object.keys(answers).length === 0) {
+                    console.warn(`Question ${index + 1} has no answers`);
+                    return;
+                }
+                
+                const card = `
+                    <div class="bg-surface-dark p-5 rounded-lg border border-border-dark flex gap-4">
+                        <div class="text-text-secondary font-mono text-sm pt-1 w-8">${String(index + 1).padStart(2, '0')}</div>
+                        <div class="flex-1">
+                            <div class="mb-3">
+                                <p class="text-white text-base leading-relaxed">${escapeHtml(questionText)}</p>
+                            </div>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                                ${Object.entries(answers).map(([key, ans]) => {
+                                    // Xử lý ans có thể là object hoặc string
+                                    const answerText = (ans && typeof ans === 'object') 
+                                        ? (ans.text || ans.latex || String(ans.value || ''))
+                                        : String(ans || '');
+                                    
+                                    const isCorrect = (ans && typeof ans === 'object' && ans.is_correct) 
+                                        || key === correctAnswerKey;
+                                    
+                                    return `
+                                        <div class="bg-[#111722] p-2 rounded border ${isCorrect ? 'border-green-500/50 bg-green-500/10 text-green-400' : 'border-border-dark text-text-secondary hover:border-primary hover:text-white'} cursor-pointer transition">
+                                            <span class="font-bold mr-1">${key}.</span> ${escapeHtml(answerText)}
+                                            ${isCorrect ? '<span class="ml-1 material-symbols-outlined text-[14px] align-text-bottom">check_circle</span>' : ''}
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <button class="p-2 rounded hover:bg-[#111722] text-text-secondary hover:text-white" title="Chỉnh sửa">
+                                <span class="material-symbols-outlined text-[20px]">edit</span>
+                            </button>
+                            <button class="p-2 rounded hover:bg-[#111722] text-text-secondary hover:text-red-400" title="Xóa">
+                                <span class="material-symbols-outlined text-[20px]">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                resultsContainer.insertAdjacentHTML('beforeend', card);
+            });
+            
+            console.log('Questions rendered successfully');
+        }
+        
+        // Xử lý nút xóa kết quả
+        const btnClearResults = document.getElementById('btn-clear-results');
+        if (btnClearResults) {
+            btnClearResults.addEventListener('click', function() {
+                if (resultsContainer) {
+                    resultsContainer.innerHTML = '';
+                }
+            });
+        }
+    });
+</script>
+</body></html>

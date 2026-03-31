@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Quản lý Ngân hàng Câu hỏi</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "surface-dark": "#1a2230",
+                        "surface-light": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for dark mode */
+        .dark ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #101622; 
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #2d3748; 
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: #4a5568; 
+        }
+        
+        /* Math simulation style */
+        .math-text {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+        }
+        .math-symbol {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: normal;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white overflow-hidden h-screen flex">
+<!-- Sidebar -->
+<aside class="w-64 hidden md:flex flex-col border-r border-slate-200 dark:border-slate-800 bg-surface-light dark:bg-[#111722] flex-shrink-0 z-20">
+<div class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-xl">functions</span>
+</div>
+<div>
+<h1 class="text-base font-bold leading-none dark:text-white">MathBank</h1>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Admin Portal</p>
+</div>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto py-6 px-4 flex flex-col gap-6">
+<!-- Menu Group 1 -->
+<div class="flex flex-col gap-1">
+<p class="px-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Quản lý</p>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary dark:bg-primary dark:text-white group" href="#">
+<span class="material-symbols-outlined text-[20px]">library_books</span>
+<span class="text-sm font-medium">Ngân hàng câu hỏi</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#232f48] hover:text-slate-900 dark:hover:text-white transition-colors" href="assignment.html">
+<span class="material-symbols-outlined text-[20px]">quiz</span>
+<span class="text-sm font-medium">Sinh đề thi</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#232f48] hover:text-slate-900 dark:hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">school</span>
+<span class="text-sm font-medium">Học sinh</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#232f48] hover:text-slate-900 dark:hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">folder_shared</span>
+<span class="text-sm font-medium">Tài liệu</span>
+</a>
+</div>
+<!-- Menu Group 2 -->
+<div class="flex flex-col gap-1">
+<p class="px-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Hệ thống</p>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#232f48] hover:text-slate-900 dark:hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">bar_chart</span>
+<span class="text-sm font-medium">Báo cáo</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#232f48] hover:text-slate-900 dark:hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="text-sm font-medium">Cài đặt</span>
+</a>
+</div>
+</div>
+<div class="p-4 border-t border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="size-10 rounded-full bg-slate-200 dark:bg-slate-700 bg-cover bg-center" data-alt="Avatar của người dùng quản trị" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCZEVBbRPT-yJkJAKJNFVTiD_bPoJzDOsxM1-_BsARosQIhte0_GDWV5NMufG6mKdHYP6KUivOJTPoTWxY9MwKUwQqOjmhyAnccyzkWICZVYNStgemyETCel5ve4Z_fLLvWb90JyH1Dn_LO8c4FuWLSeFT04tHr4aBgs9FK-MOJxYxm-x3RAiWwsDUefDyA7liwfra1vn8mNoS8j9FESfjeFflMiH6oCmvNNSm4Jgz8nSO10hlEhxdMZ4nqHIfjicdJ2DGW9wL-0Q');"></div>
+<div class="absolute bottom-0 right-0 size-3 rounded-full bg-green-500 border-2 border-white dark:border-[#111722]"></div>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-medium text-slate-900 dark:text-white truncate">Admin User</p>
+<p class="text-xs text-slate-500 dark:text-slate-400 truncate">admin@mathbank.vn</p>
+</div>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+<span class="material-symbols-outlined">logout</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
+<!-- Top Nav -->
+<header class="h-16 flex items-center justify-between px-6 border-b border-slate-200 dark:border-slate-800 bg-surface-light dark:bg-[#111722]">
+<div class="flex items-center gap-4">
+<button class="md:hidden p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<!-- Breadcrumbs stripped down -->
+<nav class="hidden sm:flex items-center text-sm font-medium text-slate-500 dark:text-slate-400">
+<a class="hover:text-primary transition-colors" href="dashboard.html">Trang chủ</a>
+<span class="mx-2 text-slate-400">/</span>
+<a class="hover:text-primary transition-colors" href="#">Ngân hàng câu hỏi</a>
+<span class="mx-2 text-slate-400">/</span>
+<span class="text-slate-900 dark:text-white">Danh sách</span>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined text-[20px]">search</span>
+<input class="h-10 w-64 pl-10 pr-4 rounded-lg bg-slate-100 dark:bg-[#232f48] border-none text-sm text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:ring-2 focus:ring-primary" placeholder="Tìm kiếm nhanh..." type="text"/>
+</div>
+<button class="p-2 relative text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-[#232f48] rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 size-2 bg-red-500 rounded-full border border-white dark:border-[#111722]"></span>
+</button>
+</div>
+</header>
+<!-- Scrollable Area -->
+<div class="flex-1 overflow-y-auto p-4 md:p-8 scroll-smooth">
+<div class="max-w-7xl mx-auto flex flex-col gap-6">
+<!-- Page Heading -->
+<div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+<div>
+<h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Danh sách câu hỏi</h2>
+<p class="text-slate-500 dark:text-[#92a4c9] mt-1 text-sm md:text-base">Quản lý, tìm kiếm và chỉnh sửa các câu hỏi toán học đã sinh ra.</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center justify-center gap-2 h-10 px-4 rounded-lg bg-surface-light dark:bg-[#232f48] border border-slate-200 dark:border-transparent text-slate-700 dark:text-white text-sm font-medium hover:bg-slate-50 dark:hover:bg-[#2d3b55] transition-colors">
+<span class="material-symbols-outlined text-[20px]">download</span>
+<span class="hidden sm:inline">Xuất Excel</span>
+</button>
+<a href="Create a question.html">
+    
+    <button class="flex items-center justify-center gap-2 h-10 px-4 rounded-lg bg-primary text-white text-sm font-bold shadow-lg shadow-primary/30 hover:bg-blue-600 transition-all">
+        <span class="material-symbols-outlined text-[20px]">add</span>
+        <span>Tạo câu hỏi mới</span>
+    </button>
+
+</a>
+</div>
+</div>
+<!-- Filters Panel -->
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary">filter_list</span>
+<h3 class="text-sm font-bold uppercase tracking-wide text-slate-900 dark:text-white">Bộ lọc tìm kiếm</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Search Input -->
+<div class="col-span-1 md:col-span-2 lg:col-span-1">
+<label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Từ khóa</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 material-symbols-outlined text-[20px]">manage_search</span>
+<input id="search-keyword" class="w-full h-10 pl-10 pr-3 rounded-lg bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white focus:ring-1 focus:ring-primary focus:border-primary" placeholder="ID, Nội dung câu hỏi..." type="text"/>
+</div>
+</div>
+<!-- Subject Select -->
+<div>
+<label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Môn học</label>
+<div class="relative">
+<select id="filter-subject" class="w-full h-10 pl-3 pr-8 rounded-lg bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white focus:ring-1 focus:ring-primary focus:border-primary appearance-none">
+<option value="">Tất cả môn học</option>
+</select>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none material-symbols-outlined text-[20px]">keyboard_arrow_down</span>
+</div>
+</div>
+<!-- Difficulty Select -->
+<div>
+<label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Độ khó</label>
+<div class="relative">
+<select id="filter-difficulty" class="w-full h-10 pl-3 pr-8 rounded-lg bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white focus:ring-1 focus:ring-primary focus:border-primary appearance-none">
+<option value="">Tất cả</option>
+<option value="1">Dễ (Nhận biết)</option>
+<option value="2">Trung bình (Thông hiểu)</option>
+<option value="3">Khó (Vận dụng)</option>
+<option value="4">Cực khó (Vận dụng cao)</option>
+</select>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none material-symbols-outlined text-[20px]">keyboard_arrow_down</span>
+</div>
+</div>
+<!-- Status Select -->
+<div>
+<label class="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Trạng thái</label>
+<div class="relative">
+<select id="filter-status" class="w-full h-10 pl-3 pr-8 rounded-lg bg-slate-50 dark:bg-[#111722] border border-slate-200 dark:border-slate-700 text-sm text-slate-900 dark:text-white focus:ring-1 focus:ring-primary focus:border-primary appearance-none">
+<option value="">Tất cả</option>
+<option value="Đã duyệt">Đã duyệt</option>
+<option value="Chờ duyệt">Chờ duyệt</option>
+<option value="Có lỗi">Có lỗi</option>
+</select>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none material-symbols-outlined text-[20px]">keyboard_arrow_down</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Data Grid / Table -->
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-50 dark:bg-[#232f48] border-b border-slate-200 dark:border-slate-700">
+<th class="py-3 px-4 w-12">
+<input class="rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-[#111722] text-primary focus:ring-primary/20 h-4 w-4" type="checkbox"/>
+</th>
+<th class="py-3 px-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-32">ID</th>
+<th class="py-3 px-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-32">Mã môn học</th>
+<th class="py-3 px-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider min-w-[300px]">Nội dung câu hỏi</th>
+<th class="py-3 px-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-32">Môn học</th>
+<th class="py-3 px-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-32">Chương</th>
+<th class="py-3 px-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-32">Phần</th>
+<th class="py-3 px-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-32">Độ khó</th>
+<th class="py-3 px-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-32">Đánh giá</th>
+<th class="py-3 px-4 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right w-24">Tác vụ</th>
+</tr>
+</thead>
+<tbody id="questions-table-body" class="divide-y divide-slate-200 dark:divide-slate-800">
+<!-- Loading state - sẽ được thay thế bởi script -->
+<tr>
+<td colspan="10" class="py-8 text-center">
+<div class="flex flex-col items-center justify-center gap-2">
+<span class="material-symbols-outlined animate-spin text-2xl text-slate-400">sync</span>
+<span class="text-slate-500 dark:text-slate-400">Đang tải dữ liệu...</span>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="flex items-center justify-between px-4 py-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#1a2230]">
+<div class="text-xs text-slate-500 dark:text-slate-400">
+                            Hiển thị <span class="font-medium text-slate-900 dark:text-white">1</span> đến <span class="font-medium text-slate-900 dark:text-white">4</span> trong tổng số <span id="total-questions" class="font-medium text-slate-900 dark:text-white">0</span> kết quả
+                        </div>
+<div class="flex items-center gap-1">
+<button class="p-1 rounded hover:bg-slate-200 dark:hover:bg-[#232f48] text-slate-500 dark:text-slate-400 disabled:opacity-50">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="h-8 w-8 flex items-center justify-center rounded bg-primary text-white text-xs font-medium">1</button>
+<button class="h-8 w-8 flex items-center justify-center rounded hover:bg-slate-200 dark:hover:bg-[#232f48] text-slate-600 dark:text-slate-400 text-xs font-medium">2</button>
+<button class="h-8 w-8 flex items-center justify-center rounded hover:bg-slate-200 dark:hover:bg-[#232f48] text-slate-600 dark:text-slate-400 text-xs font-medium">3</button>
+<span class="text-slate-400 text-xs">...</span>
+<button class="h-8 w-8 flex items-center justify-center rounded hover:bg-slate-200 dark:hover:bg-[#232f48] text-slate-600 dark:text-slate-400 text-xs font-medium">12</button>
+<button class="p-1 rounded hover:bg-slate-200 dark:hover:bg-[#232f48] text-slate-500 dark:text-slate-400">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const API_URL = "http://127.0.0.1:5000/api";
+        const tableBody = document.getElementById('questions-table-body');
+        const searchKeyword = document.getElementById('search-keyword');
+        const filterSubject = document.getElementById('filter-subject');
+        const filterDifficulty = document.getElementById('filter-difficulty');
+        const filterStatus = document.getElementById('filter-status');
+        
+        // Load subjects từ API
+        function loadSubjects() {
+            fetch(`${API_URL}/subjects`)
+                .then(res => res.json())
+                .then(subjects => {
+                    if (Array.isArray(subjects) && subjects.length > 0) {
+                        subjects.forEach(subject => {
+                            const option = document.createElement('option');
+                            option.value = subject;
+                            option.textContent = subject;
+                            filterSubject.appendChild(option);
+                        });
+                    }
+                })
+                .catch(err => console.error("Lỗi load subjects:", err));
+        }
+        
+        // Hàm chuyển LaTeX sang text thường
+        function latexToPlainText(latexText) {
+            if (!latexText) return '';
+            
+            let text = latexText;
+            
+            // Loại bỏ các ký hiệu LaTeX phổ biến
+            text = text.replace(/\$([^$]+)\$/g, '$1'); // Inline math $...$
+            text = text.replace(/\$\$([^$]+)\$\$/g, '$1'); // Display math $$...$$
+            text = text.replace(/\\\[([^\]]+)\\\]/g, '$1'); // \[...\]
+            text = text.replace(/\\\(([^\)]+)\\\)/g, '$1'); // \(...\)
+            
+            // Loại bỏ các lệnh LaTeX phổ biến
+            text = text.replace(/\\text\{([^}]+)\}/g, '$1');
+            text = text.replace(/\\mathrm\{([^}]+)\}/g, '$1');
+            text = text.replace(/\\mathbb\{([^}]+)\}/g, '$1');
+            text = text.replace(/\\mathcal\{([^}]+)\}/g, '$1');
+            text = text.replace(/\\left\(/g, '(');
+            text = text.replace(/\\right\)/g, ')');
+            text = text.replace(/\\left\[/g, '[');
+            text = text.replace(/\\right\]/g, ']');
+            text = text.replace(/\\left\{/g, '{');
+            text = text.replace(/\\right\}/g, '}');
+            text = text.replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '($1)/($2)');
+            text = text.replace(/\\sqrt\{([^}]+)\}/g, 'sqrt($1)');
+            text = text.replace(/\\sqrt\[([^\]]+)\]\{([^}]+)\}/g, 'sqrt[$1]($2)');
+            text = text.replace(/\\sum_\{([^}]+)\}\^\{([^}]+)\}/g, 'sum_$1^$2');
+            text = text.replace(/\\int_\{([^}]+)\}\^\{([^}]+)\}/g, 'int_$1^$2');
+            text = text.replace(/\\begin\{matrix\}([\s\S]*?)\\end\{matrix\}/g, '[$1]');
+            text = text.replace(/\\begin\{pmatrix\}([\s\S]*?)\\end\{pmatrix\}/g, '($1)');
+            text = text.replace(/\\begin\{bmatrix\}([\s\S]*?)\\end\{bmatrix\}/g, '[$1]');
+            text = text.replace(/\\begin\{vmatrix\}([\s\S]*?)\\end\{vmatrix\}/g, '|$1|');
+            
+            // Loại bỏ các ký tự đặc biệt LaTeX
+            text = text.replace(/\\/g, '');
+            text = text.replace(/\{/g, '');
+            text = text.replace(/\}/g, '');
+            text = text.replace(/\^/g, '^');
+            text = text.replace(/_/g, '_');
+            
+            // Làm sạch khoảng trắng thừa
+            text = text.replace(/\s+/g, ' ').trim();
+            
+            return text;
+        }
+        
+        // Hàm render câu hỏi
+        function renderQuestions(questions) {
+            if (!tableBody) return;
+            
+            tableBody.innerHTML = '';
+            
+            if (questions.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="10" class="py-8 text-center text-slate-500 dark:text-slate-400">
+                            Không tìm thấy câu hỏi nào.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            questions.forEach(q => {
+                // Map difficulty
+                const diffColors = {
+                    "Dễ (Nhận biết)": "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200 border-green-200 dark:border-green-900/50",
+                    "Trung bình (Thông hiểu)": "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200 border-yellow-200 dark:border-yellow-900/50",
+                    "Khó (Vận dụng)": "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-200 border-orange-200 dark:border-orange-900/50",
+                    "Cực khó (Vận dụng cao)": "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200 border-red-200 dark:border-red-900/50"
+                };
+                const diffColor = diffColors[q.difficulty] || diffColors["Trung bình (Thông hiểu)"];
+                
+                // Render stars
+                const stars = Array(5).fill(0).map((_, i) => 
+                    i < (q.rating || 4) ? 
+                        '<span class="material-symbols-outlined filled text-yellow-400" style="font-variation-settings: \'FILL\' 1">star</span>' :
+                        '<span class="material-symbols-outlined text-slate-300 dark:text-slate-600">star</span>'
+                ).join('');
+                
+                // Chuyển LaTeX sang text thường cho nội dung
+                const plainContent = latexToPlainText(q.content || '');
+                
+                const row = `
+                    <tr class="hover:bg-slate-50 dark:hover:bg-[#232f48]/50 transition-colors group">
+                        <td class="py-3 px-4">
+                            <input class="rounded border-slate-300 dark:border-slate-600 bg-white dark:bg-[#111722] text-primary focus:ring-primary/20 h-4 w-4" type="checkbox"/>
+                        </td>
+                        <td class="py-3 px-4">
+                            <span class="text-xs font-medium text-slate-500 dark:text-slate-400">${q.id}</span>
+                        </td>
+                        <td class="py-3 px-4">
+                            <span class="text-xs font-medium text-slate-600 dark:text-slate-300">${q.subject_code || '-'}</span>
+                        </td>
+                        <td class="py-3 px-4">
+                            <div class="text-sm text-slate-800 dark:text-slate-200 line-clamp-2">
+                                ${plainContent}
+                            </div>
+                        </td>
+                        <td class="py-3 px-4">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200">
+                                ${q.subject || "Toán học"}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4">
+                            <span class="text-xs text-slate-600 dark:text-slate-300">${q.chapter || '-'}</span>
+                        </td>
+                        <td class="py-3 px-4">
+                            <span class="text-xs text-slate-600 dark:text-slate-300">${q.section || '-'}</span>
+                        </td>
+                        <td class="py-3 px-4">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${diffColor} border">
+                                <span class="size-1.5 rounded-full bg-current"></span>
+                                ${q.difficulty.split(' ')[0]}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4">
+                            <div class="flex text-yellow-400 text-[16px]">
+                                ${stars}
+                            </div>
+                        </td>
+                        <td class="py-3 px-4 text-right">
+                            <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button class="text-slate-400 hover:text-primary transition-colors" title="Xem chi tiết">
+                                    <span class="material-symbols-outlined text-[20px]">visibility</span>
+                                </button>
+                                <button class="text-slate-400 hover:text-blue-400 transition-colors" title="Chỉnh sửa">
+                                    <span class="material-symbols-outlined text-[20px]">edit</span>
+                                </button>
+                                <button class="text-slate-400 hover:text-red-500 transition-colors delete-question-btn" data-question-id="${q.question_id || q.id}" title="Xóa câu hỏi">
+                                    <span class="material-symbols-outlined text-[20px]">delete</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tableBody.insertAdjacentHTML('beforeend', row);
+            });
+            
+            // Thêm event listener cho các nút xóa
+            document.querySelectorAll('.delete-question-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const questionId = this.getAttribute('data-question-id');
+                    if (questionId && confirm('Bạn có chắc chắn muốn xóa câu hỏi này? Hành động này không thể hoàn tác.')) {
+                        deleteQuestion(questionId);
+                    }
+                });
+            });
+        }
+        
+        // Hàm xóa câu hỏi
+        function deleteQuestion(questionId) {
+            fetch(`${API_URL}/questions/${questionId}`, {
+                method: 'DELETE'
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    // Reload danh sách câu hỏi
+                    loadQuestions();
+                } else {
+                    alert('Lỗi: ' + (data.error || 'Không thể xóa câu hỏi'));
+                }
+            })
+            .catch(err => {
+                console.error("Lỗi xóa câu hỏi:", err);
+                alert('Lỗi kết nối server!');
+            });
+        }
+        
+        // Hàm load dữ liệu
+        function loadQuestions() {
+            const keyword = searchKeyword.value.trim();
+            const subject = filterSubject.value;
+            const difficulty = filterDifficulty.value;
+            const status = filterStatus.value;
+            
+            const params = new URLSearchParams({
+                keyword: keyword,
+                subject: subject || '',
+                difficulty: difficulty || '',
+                status: status || '',
+                limit: 50,
+                offset: 0
+            });
+            
+            fetch(`${API_URL}/questions/search?${params}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        tableBody.innerHTML = `<tr><td colspan="10" class="py-8 text-center text-red-500">Lỗi: ${data.error}</td></tr>`;
+                        return;
+                    }
+                    renderQuestions(data.questions || []);
+                    // Cập nhật tổng số câu hỏi
+                    document.getElementById('total-questions').textContent = data.total || 0;
+                })
+                .catch(err => {
+                    console.error("Lỗi:", err);
+                    tableBody.innerHTML = `<tr><td colspan="10" class="py-8 text-center text-red-500">Lỗi kết nối Server!</td></tr>`;
+                });
+        }
+        
+        // Load dữ liệu khi trang tải
+        loadSubjects();
+        loadQuestions();
+        
+        // Thêm event listener cho các filter
+        searchKeyword.addEventListener('input', function() {
+            clearTimeout(this.searchTimeout);
+            this.searchTimeout = setTimeout(loadQuestions, 500);
+        });
+        
+        filterSubject.addEventListener('change', loadQuestions);
+        filterDifficulty.addEventListener('change', loadQuestions);
+        filterStatus.addEventListener('change', loadQuestions);
+    });
+</script>
+</body></html>

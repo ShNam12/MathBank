@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Quản lý Môn học - MathBank Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "surface-dark": "#1e293b",
+                        "surface-light": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for modern feel */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #101622; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569; 
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display min-h-screen flex flex-col overflow-x-hidden">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-slate-800 bg-surface-light dark:bg-[#111722]">
+<div class="px-6 md:px-10 h-16 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="flex items-center justify-center size-8 rounded bg-primary/10 text-primary">
+<span class="material-symbols-outlined text-2xl">functions</span>
+</div>
+<h2 class="text-lg font-bold tracking-tight text-slate-900 dark:text-white">MathBank Admin</h2>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="dashboard.html">Dashboard</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="Question bank.html">Ngân hàng câu hỏi</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="Template_management.html">Quản lý Template</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Cấu hình</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="size-9 rounded-full bg-slate-200 dark:bg-slate-700 bg-center bg-cover border border-slate-300 dark:border-slate-600" data-alt="User profile avatar of a smiling man" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBdyIMcHQf6nCxn_2TfoQUZt-4-rg17I-vCC3MMFZVdwiO8CO7r_piUQBi8Kt6sgzTHmw4mAGxOEYDUro-n2M_ILs-2H2vWzVydg-qdUozDGdlP3w0UpnF5nGIvk-_DzVsRFnPpN_qxjkNaDCz7QLnGjtVv7UL__1JljW5P0rwDb7JVfiY_NFrdiJbjJy6moiguljuM0qqQtnoOGTNHC229Fy0-bdA-vU8K4cB3s24e9Se7Az7PGhMzqK3QMAcZpxWqt6lnD5MOqA");'></div>
+</div>
+</div>
+</header>
+<!-- Main Layout -->
+<main class="flex-1 w-full max-w-[1400px] mx-auto p-6 md:p-10 flex flex-col gap-6">
+<!-- Page Heading -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div class="flex flex-col gap-1">
+<h1 class="text-3xl md:text-4xl font-black tracking-tight text-slate-900 dark:text-white">Quản lý môn học</h1>
+<p class="text-slate-500 dark:text-slate-400 text-base font-normal max-w-2xl">
+                    Danh sách các môn học hiện có. Tạo mới, chỉnh sửa và quản lý cấu trúc các môn học.
+                </p>
+</div>
+<button id="create-subject-btn" class="flex items-center justify-center gap-2 h-10 px-6 rounded-lg bg-primary hover:bg-blue-600 text-white text-sm font-bold shadow-lg shadow-blue-500/20 transition-all active:scale-95 shrink-0">
+    <span class="material-symbols-outlined text-[20px]">add</span>
+    <span>Tạo môn học</span>
+</button>
+</div>
+<!-- Filters & Search Toolbar -->
+<div class="flex flex-col xl:flex-row gap-4 justify-between items-start xl:items-center bg-white dark:bg-[#151c2b] p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<!-- Filter Dropdown -->
+<div class="relative group">
+    <select id="filter-subject" class="appearance-none h-11 pl-3 pr-7 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#1e293b] text-sm font-medium text-slate-600 dark:text-slate-300 hover:border-primary dark:hover:border-primary focus:ring-2 focus:ring-primary focus:border-transparent transition-all cursor-pointer w-full xl:w-auto">
+        <option value="all">Lọc theo môn học</option>
+    </select>
+    <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-[20px] pointer-events-none group-hover:text-primary">
+        keyboard_arrow_down
+    </span>
+</div>
+<!-- Search Bar -->
+<div class="w-full xl:max-w-md relative group flex-1">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-slate-400 group-focus-within:text-primary transition-colors">search</span>
+</div>
+<input id="search-input" class="block w-full h-11 pl-10 pr-10 rounded-lg border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#1e293b] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-primary focus:border-transparent text-sm transition-all" placeholder="Tìm kiếm theo tên các môn học" type="text"/>
+<button id="clear-search-btn" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-primary transition-colors opacity-0 pointer-events-none" style="display: none;">
+    <span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+</div>
+<!-- Subject Cards Grid -->
+<div id="subjects-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+    <!-- Loading state -->
+    <div class="col-span-full flex flex-col items-center justify-center py-12 text-slate-500 dark:text-slate-400">
+        <span class="material-symbols-outlined animate-spin text-4xl mb-4">sync</span>
+        <span>Đang tải dữ liệu...</span>
+    </div>
+</div>
+
+<!-- Modal: Tạo/Chỉnh sửa Môn học -->
+<div id="modal-subject" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
+    <div class="bg-white dark:bg-[#1e293b] rounded-xl p-6 w-full max-w-md mx-4 shadow-xl">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white" id="modal-subject-title">Tạo môn học mới</h3>
+            <button id="modal-subject-close" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form id="form-subject">
+            <input type="hidden" id="subject-id" name="id">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Tên môn học *</label>
+                    <input type="text" id="subject-name" name="name" required class="w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0c1018] text-slate-900 dark:text-white focus:ring-2 focus:ring-primary">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Mã môn học</label>
+                    <input type="text" id="subject-code" name="code" class="w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0c1018] text-slate-900 dark:text-white focus:ring-2 focus:ring-primary">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Mô tả</label>
+                    <textarea id="subject-description" name="description" rows="3" class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0c1018] text-slate-900 dark:text-white focus:ring-2 focus:ring-primary"></textarea>
+                </div>
+            </div>
+            <div class="flex gap-3 mt-6">
+                <button type="button" id="modal-subject-cancel" class="flex-1 h-10 px-4 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800">Hủy</button>
+                <button type="submit" class="flex-1 h-10 px-4 rounded-lg bg-primary hover:bg-blue-600 text-white font-bold">Lưu</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal: Tạo Chương -->
+<div id="modal-chapter" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
+    <div class="bg-white dark:bg-[#1e293b] rounded-xl p-6 w-full max-w-md mx-4 shadow-xl">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white">Tạo chương mới</h3>
+            <button id="modal-chapter-close" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form id="form-chapter">
+            <input type="hidden" id="chapter-subject-id" name="subject_id">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Tên chương *</label>
+                    <input type="text" id="chapter-name" name="name" required class="w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0c1018] text-slate-900 dark:text-white focus:ring-2 focus:ring-primary">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Mô tả</label>
+                    <textarea id="chapter-description" name="description" rows="3" class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0c1018] text-slate-900 dark:text-white focus:ring-2 focus:ring-primary"></textarea>
+                </div>
+            </div>
+            <div class="flex gap-3 mt-6">
+                <button type="button" id="modal-chapter-cancel" class="flex-1 h-10 px-4 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800">Hủy</button>
+                <button type="submit" class="flex-1 h-10 px-4 rounded-lg bg-primary hover:bg-blue-600 text-white font-bold">Lưu</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal: Tạo Mục -->
+<div id="modal-section" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
+    <div class="bg-white dark:bg-[#1e293b] rounded-xl p-6 w-full max-w-md mx-4 shadow-xl">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white">Tạo mục mới</h3>
+            <button id="modal-section-close" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form id="form-section">
+            <input type="hidden" id="section-chapter-id" name="chapter_id">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Tên mục *</label>
+                    <input type="text" id="section-name" name="name" required class="w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0c1018] text-slate-900 dark:text-white focus:ring-2 focus:ring-primary">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Mô tả</label>
+                    <textarea id="section-description" name="description" rows="3" class="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0c1018] text-slate-900 dark:text-white focus:ring-2 focus:ring-primary"></textarea>
+                </div>
+            </div>
+            <div class="flex gap-3 mt-6">
+                <button type="button" id="modal-section-cancel" class="flex-1 h-10 px-4 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800">Hủy</button>
+                <button type="submit" class="flex-1 h-10 px-4 rounded-lg bg-primary hover:bg-blue-600 text-white font-bold">Lưu</button>
+            </div>
+        </form>
+    </div>
+</div>
+</main>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const API_URL = "http://127.0.0.1:5000/api";
+        
+        // DOM Elements
+        const subjectsContainer = document.getElementById('subjects-container');
+        const searchInput = document.getElementById('search-input');
+        const filterSubject = document.getElementById('filter-subject');
+        const clearSearchBtn = document.getElementById('clear-search-btn');
+        const createSubjectBtn = document.getElementById('create-subject-btn');
+        
+        // Modal elements
+        const modalSubject = document.getElementById('modal-subject');
+        const modalChapter = document.getElementById('modal-chapter');
+        const modalSection = document.getElementById('modal-section');
+        
+        // State management
+        let allSubjects = [];
+        let filteredSubjects = [];
+        let expandedSubjects = new Set(); // Track expanded subjects
+        let subjectChapters = {}; // Cache: subject_id -> chapters
+        let chapterSections = {}; // Cache: chapter_id -> sections
+        
+        // ============================================================
+        // HÀM: LẤY DANH SÁCH SUBJECTS
+        // ============================================================
+        function loadSubjects() {
+            subjectsContainer.innerHTML = `
+                <div class="col-span-full flex flex-col items-center justify-center py-12 text-slate-500 dark:text-slate-400">
+                    <span class="material-symbols-outlined animate-spin text-4xl mb-4">sync</span>
+                    <span>Đang tải dữ liệu...</span>
+                </div>
+            `;
+            
+            fetch(`${API_URL}/get-all-subjects`)
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error(`HTTP error! status: ${res.status}`);
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    console.log("API Response:", data);
+                    // Xử lý cả 2 trường hợp: {subjects: [...]} hoặc [{...}]
+                    if (data.subjects && Array.isArray(data.subjects)) {
+                        allSubjects = data.subjects;
+                    } else if (Array.isArray(data)) {
+                        allSubjects = data;
+                    } else if (data.error) {
+                        console.error("API Error:", data.error);
+                        allSubjects = [];
+                    } else {
+                        console.warn("Unexpected data format:", data);
+                        allSubjects = [];
+                    }
+                    console.log("Loaded subjects:", allSubjects);
+                    populateFilterDropdown();
+                    applyFilters();
+                })
+                .catch(err => {
+                    console.error("Lỗi khi tải subjects:", err);
+                    allSubjects = [];
+                    populateFilterDropdown();
+                    applyFilters();
+                });
+        }
+        
+        // ============================================================
+        // HÀM: LẤY CHƯƠNG CỦA MÔN HỌC
+        // ============================================================
+        function loadChapters(subjectId) {
+            if (subjectChapters[subjectId]) {
+                return Promise.resolve(subjectChapters[subjectId]);
+            }
+            
+            return fetch(`${API_URL}/subjects/${subjectId}/chapters`)
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error(`HTTP error! status: ${res.status}`);
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    console.log(`Chapters for subject ${subjectId}:`, data);
+                    const chapters = data.chapters || data || [];
+                    subjectChapters[subjectId] = chapters;
+                    return chapters;
+                })
+                .catch(err => {
+                    console.error("Lỗi khi tải chapters:", err);
+                    return [];
+                });
+        }
+        
+        // ============================================================
+        // HÀM: LẤY MỤC CỦA CHƯƠNG
+        // ============================================================
+        function loadSections(chapterId) {
+            if (chapterSections[chapterId]) {
+                return Promise.resolve(chapterSections[chapterId]);
+            }
+            
+            return fetch(`${API_URL}/chapters/${chapterId}/sections`)
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error(`HTTP error! status: ${res.status}`);
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    console.log(`Sections for chapter ${chapterId}:`, data);
+                    const sections = data.sections || data || [];
+                    chapterSections[chapterId] = sections;
+                    return sections;
+                })
+                .catch(err => {
+                    console.error("Lỗi khi tải sections:", err);
+                    return [];
+                });
+        }
+        
+        // ============================================================
+        // HÀM: RENDER SUBJECT CARD VỚI EXPAND INLINE
+        // ============================================================
+        function renderSubjects() {
+            subjectsContainer.innerHTML = '';
+            
+            if (filteredSubjects.length === 0) {
+                subjectsContainer.innerHTML = `
+                    <div class="col-span-full flex flex-col items-center justify-center py-12 text-slate-500 dark:text-slate-400">
+                        <span class="material-symbols-outlined text-4xl mb-4">search_off</span>
+                        <span>Không tìm thấy môn học nào phù hợp với điều kiện lọc.</span>
+                    </div>
+                `;
+                return;
+            }
+            
+            filteredSubjects.forEach(subject => {
+                const card = document.createElement('div');
+                card.className = 'col-span-full sm:col-span-2 lg:col-span-3 xl:col-span-4';
+                card.setAttribute('data-subject-id', subject.id);
+                
+                const isExpanded = expandedSubjects.has(subject.id);
+                
+                card.innerHTML = `
+                    <div class="bg-white dark:bg-[#1e293b] rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <!-- Subject Header -->
+                        <div class="p-6 flex items-center justify-between cursor-pointer" onclick="toggleSubject(${subject.id})">
+                            <div class="flex items-center gap-4">
+                                <span class="material-symbols-outlined text-primary transition-transform ${isExpanded ? 'rotate-90' : ''}">chevron_right</span>
+                                <div>
+                                    <h3 class="text-lg font-bold text-slate-900 dark:text-white">${subject.name}</h3>
+                                    ${subject.code ? `<span class="text-xs text-slate-500 dark:text-slate-400 font-mono">${subject.code}</span>` : ''}
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="event.stopPropagation(); openCreateChapterModal(${subject.id})" class="p-2 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/10 transition-colors" title="Thêm chương">
+                                    <span class="material-symbols-outlined text-[18px]">add</span>
+                                </button>
+                                <button onclick="event.stopPropagation(); editSubject(${subject.id})" class="p-2 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/10 transition-colors" title="Chỉnh sửa">
+                                    <span class="material-symbols-outlined text-[18px]">edit</span>
+                                </button>
+                                <button onclick="event.stopPropagation(); deleteSubject(${subject.id})" class="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-500/10 transition-colors" title="Xóa">
+                                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Expanded Content (Chapters & Sections) -->
+                        <div class="subject-content px-6 pb-6 ${isExpanded ? '' : 'hidden'}" id="subject-content-${subject.id}">
+                            <div class="loading-chapters text-center py-4 text-slate-500 dark:text-slate-400">
+                                <span class="material-symbols-outlined animate-spin">sync</span> Đang tải...
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                subjectsContainer.appendChild(card);
+                
+                // Load chapters nếu đã expanded
+                if (isExpanded) {
+                    renderSubjectContent(subject.id);
+                }
+            });
+        }
+        
+        // ============================================================
+        // HÀM: RENDER NỘI DUNG MÔN HỌC (Chapters & Sections)
+        // ============================================================
+        function renderSubjectContent(subjectId) {
+            const contentDiv = document.getElementById(`subject-content-${subjectId}`);
+            if (!contentDiv) return;
+            
+            loadChapters(subjectId).then(chapters => {
+                if (chapters.length === 0) {
+                    contentDiv.innerHTML = `
+                        <div class="text-center py-8 text-slate-500 dark:text-slate-400">
+                            <p>Chưa có chương nào. Nhấn nút "Thêm chương" để tạo mới.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = '<div class="space-y-4">';
+                
+                chapters.forEach(chapter => {
+                    html += `
+                        <div class="border border-slate-200 dark:border-slate-700 rounded-lg p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-semibold text-slate-900 dark:text-white">${chapter.name}</h4>
+                                <div class="flex gap-2">
+                                    <button onclick="openCreateSectionModal(${chapter.id})" class="p-1.5 rounded text-xs text-slate-400 hover:text-primary hover:bg-primary/10" title="Thêm mục">
+                                        <span class="material-symbols-outlined text-[16px]">add</span>
+                                    </button>
+                                    <button onclick="editChapter(${chapter.id})" class="p-1.5 rounded text-slate-400 hover:text-primary hover:bg-primary/10">
+                                        <span class="material-symbols-outlined text-[16px]">edit</span>
+                                    </button>
+                                    <button onclick="deleteChapter(${chapter.id})" class="p-1.5 rounded text-slate-400 hover:text-red-500 hover:bg-red-500/10">
+                                        <span class="material-symbols-outlined text-[16px]">delete</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="sections-container mt-3" id="sections-${chapter.id}">
+                                <div class="text-xs text-slate-500">Đang tải mục...</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                contentDiv.innerHTML = html;
+                
+                // Load sections cho từng chapter
+                chapters.forEach(chapter => {
+                    loadSections(chapter.id).then(sections => {
+                        renderSections(chapter.id, sections);
+                    });
+                });
+            });
+        }
+        
+        // ============================================================
+        // HÀM: RENDER SECTIONS (MỤC)
+        // ============================================================
+        function renderSections(chapterId, sections) {
+            const sectionsDiv = document.getElementById(`sections-${chapterId}`);
+            if (!sectionsDiv) return;
+            
+            if (sections.length === 0) {
+                sectionsDiv.innerHTML = '<div class="text-xs text-slate-500 dark:text-slate-400 italic">Chưa có mục nào.</div>';
+                return;
+            }
+            
+            let html = '<div class="space-y-2">';
+            sections.forEach(section => {
+                html += `
+                    <a href="Template_management.html?category_id=${section.id}" class="flex items-center justify-between p-2 rounded hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors group">
+                        <span class="text-sm text-slate-700 dark:text-slate-300">${section.name}</span>
+                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onclick="event.preventDefault(); editSection(${section.id})" class="p-1 rounded text-slate-400 hover:text-primary">
+                                <span class="material-symbols-outlined text-[14px]">edit</span>
+                            </button>
+                            <button onclick="event.preventDefault(); deleteSection(${section.id})" class="p-1 rounded text-slate-400 hover:text-red-500">
+                                <span class="material-symbols-outlined text-[14px]">delete</span>
+                            </button>
+                        </div>
+                    </a>
+                `;
+            });
+            html += '</div>';
+            sectionsDiv.innerHTML = html;
+        }
+        
+        // ============================================================
+        // HÀM: TOGGLE SUBJECT EXPAND
+        // ============================================================
+        window.toggleSubject = function(subjectId) {
+            if (expandedSubjects.has(subjectId)) {
+                expandedSubjects.delete(subjectId);
+            } else {
+                expandedSubjects.add(subjectId);
+            }
+            renderSubjects();
+        };
+        
+        // ============================================================
+        // HÀM: MODAL HANDLERS
+        // ============================================================
+        function openSubjectModal(subjectId = null) {
+            const form = document.getElementById('form-subject');
+            const title = document.getElementById('modal-subject-title');
+            
+            if (subjectId) {
+                const subject = allSubjects.find(s => s.id === subjectId);
+                if (subject) {
+                    title.textContent = 'Chỉnh sửa môn học';
+                    document.getElementById('subject-id').value = subject.id;
+                    document.getElementById('subject-name').value = subject.name;
+                    document.getElementById('subject-code').value = subject.code || '';
+                    document.getElementById('subject-description').value = subject.description || '';
+                }
+            } else {
+                title.textContent = 'Tạo môn học mới';
+                form.reset();
+                document.getElementById('subject-id').value = '';
+            }
+            
+            modalSubject.classList.remove('hidden');
+            modalSubject.classList.add('flex');
+        }
+        
+        function closeSubjectModal() {
+            modalSubject.classList.add('hidden');
+            modalSubject.classList.remove('flex');
+        }
+        
+        function openCreateChapterModal(subjectId) {
+            document.getElementById('chapter-subject-id').value = subjectId;
+            modalChapter.classList.remove('hidden');
+            modalChapter.classList.add('flex');
+        }
+        
+        window.openCreateChapterModal = openCreateChapterModal;
+        
+        function closeChapterModal() {
+            modalChapter.classList.add('hidden');
+            modalChapter.classList.remove('flex');
+            document.getElementById('form-chapter').reset();
+        }
+        
+        function openCreateSectionModal(chapterId) {
+            document.getElementById('section-chapter-id').value = chapterId;
+            modalSection.classList.remove('hidden');
+            modalSection.classList.add('flex');
+        }
+        
+        window.openCreateSectionModal = openCreateSectionModal;
+        
+        function closeSectionModal() {
+            modalSection.classList.add('hidden');
+            modalSection.classList.remove('flex');
+            document.getElementById('form-section').reset();
+        }
+        
+        // ============================================================
+        // HÀM: CRUD OPERATIONS
+        // ============================================================
+        window.editSubject = function(subjectId) {
+            openSubjectModal(subjectId);
+        };
+        
+        window.deleteSubject = function(subjectId) {
+            if (!confirm('Bạn có chắc chắn muốn xóa môn học này?')) return;
+            
+            fetch(`${API_URL}/subjects/${subjectId}`, { method: 'DELETE' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        loadSubjects();
+                    } else {
+                        alert(data.error || 'Xóa môn học thất bại.');
+                    }
+                })
+                .catch(err => {
+                    console.error('Lỗi khi xóa môn học:', err);
+                    alert('Lỗi kết nối server.');
+                });
+        };
+        
+        window.editChapter = function(chapterId) {
+            alert('Chức năng chỉnh sửa chương sẽ được thêm sau.');
+        };
+        
+        window.deleteChapter = function(chapterId) {
+            if (!confirm('Bạn có chắc chắn muốn xóa chương này?')) return;
+            
+            fetch(`${API_URL}/categories/${chapterId}`, { method: 'DELETE' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        // Clear cache và reload
+                        Object.keys(subjectChapters).forEach(sid => {
+                            subjectChapters[sid] = subjectChapters[sid].filter(c => c.id !== chapterId);
+                        });
+                        renderSubjects();
+                    } else {
+                        alert(data.error || 'Xóa chương thất bại.');
+                    }
+                })
+                .catch(err => {
+                    console.error('Lỗi khi xóa chương:', err);
+                    alert('Lỗi kết nối server.');
+                });
+        };
+        
+        window.editSection = function(sectionId) {
+            alert('Chức năng chỉnh sửa mục sẽ được thêm sau.');
+        };
+        
+        window.deleteSection = function(sectionId) {
+            if (!confirm('Bạn có chắc chắn muốn xóa mục này?')) return;
+            
+            fetch(`${API_URL}/categories/${sectionId}`, { method: 'DELETE' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        // Clear cache và reload
+                        Object.keys(chapterSections).forEach(cid => {
+                            chapterSections[cid] = chapterSections[cid].filter(s => s.id !== sectionId);
+                        });
+                        renderSubjects();
+                    } else {
+                        alert(data.error || 'Xóa mục thất bại.');
+                    }
+                })
+                .catch(err => {
+                    console.error('Lỗi khi xóa mục:', err);
+                    alert('Lỗi kết nối server.');
+                });
+        };
+        
+        // ============================================================
+        // FORM SUBMISSIONS
+        // ============================================================
+        document.getElementById('form-subject').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const subjectId = formData.get('id');
+            const payload = {
+                name: formData.get('name'),
+                code: formData.get('code'),
+                description: formData.get('description')
+            };
+            
+            const url = subjectId ? `${API_URL}/subjects/${subjectId}` : `${API_URL}/subjects`;
+            const method = subjectId ? 'PUT' : 'POST';
+            
+            fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success || data.subject) {
+                    closeSubjectModal();
+                    loadSubjects();
+                } else {
+                    alert(data.error || 'Lưu môn học thất bại.');
+                }
+            })
+            .catch(err => {
+                console.error('Lỗi khi lưu môn học:', err);
+                alert('Lỗi kết nối server.');
+            });
+        });
+        
+        document.getElementById('form-chapter').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const subjectId = formData.get('subject_id');
+            const payload = {
+                name: formData.get('name'),
+                description: formData.get('description')
+            };
+            
+            fetch(`${API_URL}/subjects/${subjectId}/chapters`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success || data.chapter) {
+                    closeChapterModal();
+                    // Clear cache và reload
+                    delete subjectChapters[subjectId];
+                    renderSubjects();
+                } else {
+                    alert(data.error || 'Tạo chương thất bại.');
+                }
+            })
+            .catch(err => {
+                console.error('Lỗi khi tạo chương:', err);
+                alert('Lỗi kết nối server.');
+            });
+        });
+        
+        document.getElementById('form-section').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const chapterId = formData.get('chapter_id');
+            const payload = {
+                name: formData.get('name'),
+                description: formData.get('description')
+            };
+            
+            fetch(`${API_URL}/chapters/${chapterId}/sections`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success || data.section) {
+                    closeSectionModal();
+                    // Clear cache và reload
+                    delete chapterSections[chapterId];
+                    renderSubjects();
+                } else {
+                    alert(data.error || 'Tạo mục thất bại.');
+                }
+            })
+            .catch(err => {
+                console.error('Lỗi khi tạo mục:', err);
+                alert('Lỗi kết nối server.');
+            });
+        });
+        
+        // ============================================================
+        // MODAL CLOSE HANDLERS
+        // ============================================================
+        document.getElementById('modal-subject-close').addEventListener('click', closeSubjectModal);
+        document.getElementById('modal-subject-cancel').addEventListener('click', closeSubjectModal);
+        document.getElementById('modal-chapter-close').addEventListener('click', closeChapterModal);
+        document.getElementById('modal-chapter-cancel').addEventListener('click', closeChapterModal);
+        document.getElementById('modal-section-close').addEventListener('click', closeSectionModal);
+        document.getElementById('modal-section-cancel').addEventListener('click', closeSectionModal);
+        
+        // Close modal khi click outside
+        [modalSubject, modalChapter, modalSection].forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    if (modal === modalSubject) closeSubjectModal();
+                    else if (modal === modalChapter) closeChapterModal();
+                    else if (modal === modalSection) closeSectionModal();
+                }
+            });
+        });
+        
+        // ============================================================
+        // OTHER FUNCTIONS
+        // ============================================================
+        function populateFilterDropdown() {
+            filterSubject.innerHTML = '<option value="all">Lọc theo môn học</option>';
+            allSubjects.forEach(subject => {
+                const option = document.createElement('option');
+                option.value = subject.id;
+                option.textContent = subject.name;
+                filterSubject.appendChild(option);
+            });
+        }
+        
+        function applyFilters() {
+            console.log("applyFilters called, allSubjects:", allSubjects);
+            const keyword = searchInput.value.trim().toLowerCase();
+            const selectedSubjectId = filterSubject.value;
+            
+            filteredSubjects = allSubjects.filter(subject => {
+                const matchesSearch = !keyword || (subject.name && subject.name.toLowerCase().includes(keyword));
+                const matchesFilter = selectedSubjectId === 'all' || selectedSubjectId === '' || String(subject.id) === String(selectedSubjectId);
+                return matchesSearch && matchesFilter;
+            });
+            
+            console.log("filteredSubjects:", filteredSubjects);
+            renderSubjects();
+        }
+        
+        function toggleClearButton() {
+            if (searchInput.value.trim()) {
+                clearSearchBtn.style.display = 'flex';
+                clearSearchBtn.classList.remove('opacity-0', 'pointer-events-none');
+            } else {
+                clearSearchBtn.style.display = 'none';
+                clearSearchBtn.classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
+        
+        // ============================================================
+        // EVENT LISTENERS
+        // ============================================================
+        searchInput.addEventListener('input', () => {
+            toggleClearButton();
+            applyFilters();
+        });
+        
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                applyFilters();
+            }
+        });
+        
+        clearSearchBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            toggleClearButton();
+            applyFilters();
+        });
+        
+        filterSubject.addEventListener('change', () => {
+            applyFilters();
+        });
+        
+        createSubjectBtn.addEventListener('click', () => {
+            openSubjectModal();
+        });
+        
+        // ============================================================
+        // KHỞI TẠO
+        // ============================================================
+        loadSubjects();
+    });
+</script>
+</body></html>
+
+

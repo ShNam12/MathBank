@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Quản lý &amp; Xuất Đề thi - MathBank</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Serif:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "surface-dark": "#192233",
+                        "border-dark": "#232f48",
+                        "text-secondary": "#92a4c9"
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "math": ["Noto Serif", "serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom Scrollbar for dark theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #101622; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #232f48; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #324467; 
+        }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-filled {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-hidden h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-border-dark bg-background-dark px-6 py-3 shrink-0 z-20">
+<div class="flex items-center gap-4 text-white">
+<div class="size-8 flex items-center justify-center bg-primary rounded-lg text-white">
+<span class="material-symbols-outlined">calculate</span>
+</div>
+<h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em]">MathBank Pro</h2>
+</div>
+<div class="flex flex-1 justify-end gap-8 items-center">
+<div class="flex items-center gap-6 hidden md:flex">
+<a class="text-text-secondary hover:text-white text-sm font-medium leading-normal transition-colors" href="dashboard.html">Trang chủ</a>
+<a class="text-white text-sm font-medium leading-normal transition-colors" href="#">Ngân hàng câu hỏi</a>
+<a class="text-text-secondary hover:text-white text-sm font-medium leading-normal transition-colors" href="#">Đề thi</a>
+<a class="text-text-secondary hover:text-white text-sm font-medium leading-normal transition-colors" href="#">Báo cáo</a>
+</div>
+<div class="h-8 w-[1px] bg-border-dark mx-2"></div>
+<div class="flex items-center gap-3">
+<div class="text-right hidden sm:block">
+<p class="text-sm font-medium text-white">Thầy Nguyễn Văn A</p>
+<p class="text-xs text-text-secondary">Giáo viên Toán</p>
+</div>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 ring-2 ring-border-dark" data-alt="Avatar of the user" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCXkdfgCTBW3x_v8fh-hfLEAI62AlVjLYI8wxYFrKJDfCnioJrE6VjEaV1JveBdrr19m3sQEMsjkOFERnDNVuJQpU8nKgbApqAtzhA4Ou_7-BdZYc-Xm_spw_4gChbFT3kNcfm4SSEcotHLuVWnHfMTqlBBj40WW0XTftyit9HwaA0oop9mSZWGBav6efJFTl8uCb6t8ncG-fahL4EohPavuuPyiHlo-CHnyBpjADajhxcz06Q06rmciA0pPNXMSmIdsve34QdlQw");'></div>
+</div>
+</div>
+</header>
+<!-- Toolbar / Command Center -->
+<div class="bg-surface-dark border-b border-border-dark px-6 py-3 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shrink-0 shadow-sm z-10">
+<div class="flex flex-1 w-full md:w-auto items-center gap-4">
+<div class="flex flex-col flex-1 max-w-2xl">
+<label class="text-xs text-text-secondary font-medium mb-1 uppercase tracking-wider">Tên đề thi</label>
+<input id="exam-name-input" class="bg-background-dark border border-border-dark text-white text-lg font-semibold rounded px-3 py-1.5 focus:outline-none focus:border-primary w-full" type="text" value="Đề thi thử Tốt nghiệp THPT 2024 - Mã đề 101"/>
+</div>
+</div>
+<div class="flex items-center gap-3 w-full md:w-auto justify-end">
+<button class="flex items-center justify-center gap-2 h-10 px-4 bg-background-dark border border-border-dark hover:bg-border-dark text-white text-sm font-medium rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[20px]">save</span>
+<span class="hidden sm:inline">Lưu nháp</span>
+</button>
+<button class="flex items-center justify-center gap-2 h-10 px-4 bg-background-dark border border-border-dark hover:bg-border-dark text-white text-sm font-medium rounded-lg transition-colors">
+<span class="material-symbols-outlined text-[20px]">shuffle</span>
+<span class="hidden sm:inline">Xáo trộn</span>
+</button>
+<div class="h-8 w-[1px] bg-border-dark mx-1"></div>
+<div class="relative group">
+<button class="flex items-center justify-center gap-2 h-10 px-5 bg-primary hover:bg-blue-600 text-white text-sm font-bold rounded-lg shadow-lg shadow-blue-900/20 transition-all">
+<span class="material-symbols-outlined text-[20px]">ios_share</span>
+<span>Xuất Đề Thi</span>
+<span class="material-symbols-outlined text-[18px]">expand_more</span>
+</button>
+<!-- Dropdown Simulation -->
+<div class="absolute right-0 mt-2 w-48 bg-surface-dark border border-border-dark rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all transform origin-top-right z-50">
+<a class="block px-4 py-2 text-sm text-white hover:bg-primary/20 flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-[18px] text-blue-400">description</span> Word (.docx)
+                    </a>
+<a class="block px-4 py-2 text-sm text-white hover:bg-primary/20 flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-[18px] text-green-400">functions</span> LaTeX (.tex)
+                    </a>
+<a class="block px-4 py-2 text-sm text-white hover:bg-primary/20 flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-[18px] text-orange-400">school</span> Moodle XML
+                    </a>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Workspace (Split View) -->
+<main class="flex-1 flex overflow-hidden">
+<!-- LEFT PANEL: Builder / Question Bank -->
+<aside class="w-[400px] flex flex-col border-r border-border-dark bg-background-dark shrink-0 transition-all">
+<!-- Search & Filters -->
+<div class="p-4 border-b border-border-dark flex flex-col gap-3 bg-surface-dark">
+<div class="relative">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3 text-text-secondary">
+<span class="material-symbols-outlined">search</span>
+</span>
+<input id="search-input" class="w-full bg-background-dark border border-border-dark text-white text-sm rounded-lg pl-10 pr-4 py-2.5 focus:outline-none focus:border-primary placeholder:text-gray-600" placeholder="Tìm kiếm theo ID, nội dung..." type="text"/>
+</div>
+<div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+<select id="subject-filter" class="bg-background-dark border border-border-dark text-white text-xs rounded px-2 py-1.5 focus:outline-none cursor-pointer">
+<option value="">Môn: Tất cả</option>
+</select>
+<select id="grade-filter" class="bg-background-dark border border-border-dark text-white text-xs rounded px-2 py-1.5 focus:outline-none cursor-pointer">
+<option value="">Lớp: Tất cả</option>
+<option value="10">Lớp 10</option>
+<option value="11">Lớp 11</option>
+<option value="12">Lớp 12</option>
+</select>
+<select id="difficulty-filter" class="bg-background-dark border border-border-dark text-white text-xs rounded px-2 py-1.5 focus:outline-none cursor-pointer">
+<option value="">Độ khó: Tất cả</option>
+<option value="1">Dễ (Nhận biết)</option>
+<option value="2">Trung bình (Thông hiểu)</option>
+<option value="3">Khó (Vận dụng)</option>
+<option value="4">Cực khó (Vận dụng cao)</option>
+</select>
+</div>
+<div class="flex items-center justify-between text-xs text-text-secondary mt-1">
+<span>Kết quả: <strong id="question-count" class="text-white">0</strong> câu hỏi</span>
+<button class="text-primary hover:text-blue-400 flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">filter_list</span> Bộ lọc nâng cao
+                    </button>
+</div>
+</div>
+<!-- Question List -->
+<div id="question-list" class="flex-1 overflow-y-auto p-3 space-y-3">
+<!-- Loading state - sẽ được thay thế bởi script -->
+<div class="text-center text-text-secondary py-8">
+<span class="material-symbols-outlined animate-spin text-2xl mb-2">sync</span>
+<p>Đang tải câu hỏi...</p>
+</div>
+<!-- Bottom Bar -->
+<div class="p-4 border-t border-border-dark bg-surface-dark">
+<div class="flex items-center justify-between text-xs text-text-secondary">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary">list_alt</span>
+<span>Số câu hỏi: <strong id="selected-count" class="text-white">0</strong>/<span id="max-questions">50</span></span>
+</div>
+<div class="h-3 w-[1px] bg-border-dark"></div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-green-500">timer</span>
+<span>Thời gian: <strong id="duration-display" class="text-white">90</strong> phút</span>
+</div>
+<div class="h-3 w-[1px] bg-border-dark"></div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-orange-500">grade</span>
+<span>Tổng điểm: <strong id="total-points" class="text-white">0.0</strong></span>
+</div>
+</div>
+<div class="mt-3">
+<label class="block text-xs text-text-secondary font-medium mb-1.5">Thời gian làm bài</label>
+<select id="duration-select" class="w-full bg-background-dark border border-border-dark text-white text-sm rounded px-2 py-1.5 focus:outline-none focus:border-primary cursor-pointer">
+<option value="45">45 phút</option>
+<option value="60">60 phút</option>
+<option value="90" selected>90 phút</option>
+</select>
+</div>
+</div>
+</aside>
+<!-- RIGHT PANEL: Live Preview -->
+<section class="flex-1 bg-gray-900/50 flex flex-col relative overflow-hidden">
+<!-- Paper Container -->
+<div class="flex-1 overflow-y-auto p-8 flex justify-center">
+<div class="w-full max-w-[800px] bg-white text-black min-h-[1000px] shadow-2xl rounded-sm p-12 relative">
+<!-- Paper Header (Simulated) -->
+<div class="flex justify-between border-b-2 border-black pb-4 mb-8">
+<div class="text-center w-1/3">
+<p class="font-bold uppercase text-xs">Sở GD&amp;ĐT Hà Nội</p>
+<p class="font-bold uppercase text-xs">Trường THPT Chu Văn An</p>
+<div class="w-16 h-[1px] bg-black mx-auto my-1"></div>
+</div>
+<div class="text-center w-1/3">
+<p class="font-bold uppercase text-lg" id="exam-title-display">ĐỀ THI THỬ TỐT NGHIỆP</p>
+<p class="font-bold uppercase text-sm" id="exam-subject-display">MÔN: TOÁN HỌC</p>
+<p class="italic text-xs">Thời gian làm bài: <span id="exam-duration-display">90</span> phút</p>
+</div>
+<div class="text-left w-1/3 pl-8 text-xs border-l border-black border-dashed">
+<p>Mã đề thi: <strong>101</strong></p>
+<p>Họ tên TS: ...................................</p>
+<p>SBD: ............................................</p>
+</div>
+</div>
+<!-- Selected Questions Area -->
+<div id="exam-questions-container" class="space-y-6">
+<!-- Questions will be rendered here -->
+<div class="h-24 border-2 border-dashed border-gray-300 rounded flex items-center justify-center text-gray-400 text-sm">
+                            Chưa có câu hỏi nào. Nhấn dấu + ở danh sách bên trái để thêm câu hỏi vào đề.
+                       </div>
+</div>
+<!-- Footer of Paper -->
+<div class="mt-16 text-center text-xs text-black font-bold uppercase border-t-2 border-black pt-2 w-full">
+                        --- HẾT ---
+                    </div>
+</div>
+</div>
+<!-- Floating Preview Controls -->
+<div class="absolute bottom-6 right-8 flex flex-col gap-2">
+<button id="zoom-in-btn" class="size-10 rounded-full bg-surface-dark border border-border-dark text-white shadow-lg hover:bg-primary hover:border-primary transition-colors flex items-center justify-center" title="Zoom In">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button id="zoom-out-btn" class="size-10 rounded-full bg-surface-dark border border-border-dark text-white shadow-lg hover:bg-primary hover:border-primary transition-colors flex items-center justify-center" title="Zoom Out">
+<span class="material-symbols-outlined">remove</span>
+</button>
+</div>
+</section>
+</main>
+<!-- Status Bar / Footer -->
+<footer class="h-10 bg-background-dark border-t border-border-dark shrink-0 flex items-center justify-between px-6 text-xs text-text-secondary select-none">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary">list_alt</span>
+<span>Số câu hỏi: <strong id="footer-question-count" class="text-white">0</strong> / <strong id="footer-max-questions" class="text-white">0</strong></span>
+</div>
+<div class="h-3 w-[1px] bg-border-dark"></div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-green-500">timer</span>
+<span>Thời gian: <strong id="footer-duration" class="text-white">90</strong> phút</span>
+</div>
+<div class="h-3 w-[1px] bg-border-dark"></div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-orange-500">grade</span>
+<span>Tổng điểm: <strong id="footer-total-points" class="text-white">0.0</strong></span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+<span>Đã lưu lúc <span id="save-time">14:05</span></span>
+</div>
+<span>Trang 1 / <span id="total-pages">1</span> (Dự kiến)</span>
+</div>
+</footer>
+<!-- MathJax for LaTeX rendering -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const API_URL = "http://127.0.0.1:5000/api";
+        const questionList = document.getElementById('question-list');
+        const examQuestionsContainer = document.getElementById('exam-questions-container');
+        const searchInput = document.getElementById('search-input');
+        const subjectFilter = document.getElementById('subject-filter');
+        const gradeFilter = document.getElementById('grade-filter');
+        const difficultyFilter = document.getElementById('difficulty-filter');
+        const examNameInput = document.getElementById('exam-name-input');
+        const durationSelect = document.getElementById('duration-select');
+        
+        // State management
+        let allQuestions = [];
+        let selectedQuestions = []; // Array of question IDs
+        let currentDuration = 90;
+        let currentSubject = '';
+        let totalQuestionsFromDB = 0; // Tổng số câu hỏi từ database
+        
+        // Initialize MathJax configuration
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+        
+        // Load subjects from API
+        function loadSubjects() {
+            fetch(`${API_URL}/subjects`)
+                .then(res => res.json())
+                .then(subjects => {
+                    if (Array.isArray(subjects) && subjects.length > 0) {
+                        // Clear existing options except "Tất cả"
+                        subjectFilter.innerHTML = '<option value="">Môn: Tất cả</option>';
+                        
+                        // Add subjects to dropdown
+                        subjects.forEach(subject => {
+                            const option = document.createElement('option');
+                            option.value = subject;
+                            option.textContent = `Môn: ${subject}`;
+                            subjectFilter.appendChild(option);
+                        });
+                    } else {
+                        // Fallback nếu không có dữ liệu
+                        subjectFilter.innerHTML = '<option value="">Môn: Tất cả</option><option value="Toán học">Môn: Toán học</option>';
+                    }
+                })
+                .catch(err => {
+                    console.error("Lỗi load subjects:", err);
+                    // Fallback nếu có lỗi
+                    subjectFilter.innerHTML = '<option value="">Môn: Tất cả</option><option value="Toán học">Môn: Toán học</option>';
+                });
+        }
+        
+        // Load questions from API
+        function loadQuestions() {
+            const keyword = searchInput.value.trim();
+            const subject = subjectFilter.value;
+            const grade = gradeFilter.value;
+            const difficulty = difficultyFilter.value;
+            
+            const params = new URLSearchParams({
+                keyword: keyword,
+                subject: subject || '',
+                difficulty: difficulty || '',
+                status: 'Đã duyệt',
+                limit: 1000,
+                offset: 0
+            });
+            
+            questionList.innerHTML = '<div class="text-center text-text-secondary py-8"><span class="material-symbols-outlined animate-spin text-2xl mb-2">sync</span><p>Đang tải câu hỏi...</p></div>';
+            
+            fetch(`${API_URL}/questions/search?${params}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        questionList.innerHTML = '<div class="text-center text-red-400 py-8">Lỗi: ' + data.error + '</div>';
+                        return;
+                    }
+                    
+                    allQuestions = data.questions || [];
+                    totalQuestionsFromDB = data.total || allQuestions.length;
+                    document.getElementById('question-count').textContent = totalQuestionsFromDB;
+                    renderQuestions(allQuestions);
+                    
+                    // Cập nhật số câu hỏi ở footer
+                    updateFooterCounts();
+                })
+                .catch(err => {
+                    console.error("Lỗi:", err);
+                    questionList.innerHTML = '<div class="text-center text-red-400 py-8">Lỗi kết nối Server!</div>';
+                });
+        }
+        
+        // Render questions list
+        function renderQuestions(questions) {
+            if (!questionList) return;
+            
+            questionList.innerHTML = '';
+            
+            if (questions.length === 0) {
+                questionList.innerHTML = '<div class="text-center text-text-secondary py-8">Không có câu hỏi nào.</div>';
+                return;
+            }
+            
+            questions.forEach(q => {
+                const isSelected = selectedQuestions.includes(q.id);
+                
+                // Map difficulty
+                const diffMap = {
+                    "Dễ (Nhận biết)": { label: "NB", color: "bg-blue-900/30 text-blue-400 border-blue-900/50" },
+                    "Trung bình (Thông hiểu)": { label: "TH", color: "bg-green-900/30 text-green-400 border-green-900/50" },
+                    "Khó (Vận dụng)": { label: "VD", color: "bg-orange-900/30 text-orange-400 border-orange-900/50" },
+                    "Cực khó (Vận dụng cao)": { label: "VDC", color: "bg-red-900/30 text-red-400 border-red-900/50" }
+                };
+                const diff = diffMap[q.difficulty] || diffMap["Trung bình (Thông hiểu)"];
+                
+                const item = `
+                    <div class="group bg-surface-dark border ${isSelected ? 'border-primary' : 'border-border-dark'} hover:border-primary rounded-lg p-3 cursor-grab active:cursor-grabbing transition-all hover:shadow-lg relative">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex gap-2 flex-wrap">
+                                <span class="px-1.5 py-0.5 rounded ${diff.color} text-[10px] font-bold border">${diff.label}</span>
+                                <span class="px-1.5 py-0.5 rounded bg-gray-800 text-gray-400 text-[10px] border border-gray-700">${q.subject || "Toán học"}</span>
+                                <span class="text-[10px] text-gray-500 font-mono pt-0.5">${q.id}</span>
+                            </div>
+                            <button class="text-text-secondary hover:text-primary ${isSelected ? 'text-primary' : 'opacity-0 group-hover:opacity-100'} transition-opacity" onclick="addToPaper('${q.id}')" title="${isSelected ? 'Đã thêm' : 'Thêm vào đề'}">
+                                <span class="material-symbols-outlined text-[20px] ${isSelected ? 'icon-filled' : ''}">${isSelected ? 'check_circle' : 'add_circle'}</span>
+                            </button>
+                        </div>
+                        <p class="text-sm text-gray-300 font-math line-clamp-2 mb-2">
+                            ${q.content}
+                        </p>
+                        <div class="flex items-center justify-between mt-2 pt-2 border-t border-border-dark/50">
+                            <span class="text-[10px] text-gray-500">Dạng: ${q.type || "Trắc nghiệm"}</span>
+                            <span class="material-symbols-outlined text-gray-600 text-[16px]">drag_indicator</span>
+                        </div>
+                    </div>
+                `;
+                questionList.insertAdjacentHTML('beforeend', item);
+            });
+        }
+        
+        // Add question to exam
+        window.addToPaper = function(questionId) {
+            const question = allQuestions.find(q => q.id === questionId);
+            if (!question) return;
+            
+            const index = selectedQuestions.indexOf(questionId);
+            if (index > -1) {
+                // Remove from exam
+                selectedQuestions.splice(index, 1);
+                updateExamDisplay();
+                renderQuestions(allQuestions);
+            } else {
+                // Add to exam
+                if (selectedQuestions.length >= 50) {
+                    alert('Đề thi chỉ được tối đa 50 câu hỏi!');
+                    return;
+                }
+                selectedQuestions.push(questionId);
+                updateExamDisplay();
+                renderQuestions(allQuestions);
+                
+                // Scroll to exam preview và highlight câu hỏi mới thêm
+                setTimeout(() => {
+                    const questionBlock = document.querySelector(`[data-question-id="${questionId}"]`);
+                    if (questionBlock) {
+                        // Scroll đến câu hỏi trong đề thi
+                        questionBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        
+                        // Highlight câu hỏi mới thêm
+                        questionBlock.classList.add('bg-yellow-50', 'border-yellow-300', 'border-2');
+                        setTimeout(() => {
+                            questionBlock.classList.remove('bg-yellow-50', 'border-yellow-300', 'border-2');
+                        }, 2000);
+                    }
+                }, 100);
+            }
+        };
+        
+        // Update exam display
+        function updateExamDisplay() {
+            const selectedQuestionsData = allQuestions.filter(q => selectedQuestions.includes(q.id));
+            
+            // Update exam preview
+            examQuestionsContainer.innerHTML = '';
+            
+            if (selectedQuestionsData.length === 0) {
+                examQuestionsContainer.innerHTML = '<div class="h-24 border-2 border-dashed border-gray-300 rounded flex items-center justify-center text-gray-400 text-sm">Chưa có câu hỏi nào. Nhấn dấu + ở danh sách bên trái để thêm câu hỏi vào đề.</div>';
+            } else {
+                selectedQuestionsData.forEach((q, index) => {
+                    const questionHtml = renderQuestionForExam(q, index + 1);
+                    examQuestionsContainer.insertAdjacentHTML('beforeend', questionHtml);
+                });
+                
+                // Re-render MathJax sau một chút delay để đảm bảo DOM đã render
+                setTimeout(() => {
+                    if (window.MathJax && window.MathJax.typesetPromise) {
+                        window.MathJax.typesetPromise([examQuestionsContainer]).catch((err) => console.error("MathJax error:", err));
+                    }
+                }, 100);
+            }
+            
+            // Update counters
+            document.getElementById('selected-count').textContent = selectedQuestions.length;
+            updateFooterCounts();
+            document.getElementById('total-points').textContent = (selectedQuestions.length * 1.0).toFixed(1);
+            document.getElementById('footer-total-points').textContent = (selectedQuestions.length * 1.0).toFixed(1);
+            
+            // Update pages estimate (assuming ~5 questions per page)
+            const estimatedPages = Math.ceil(selectedQuestions.length / 5) || 1;
+            document.getElementById('total-pages').textContent = estimatedPages;
+        }
+        
+        // Render question for exam preview
+        function renderQuestionForExam(q, questionNumber) {
+            // Get answers from question (assuming structure from API)
+            const answers = q.answers || {};
+            const answerKeys = Object.keys(answers).sort();
+            
+            // Escape HTML và giữ LaTeX
+            const escapeHtml = (text) => {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            };
+            
+            const questionContent = escapeHtml(q.content);
+            
+            let answersHtml = '';
+            if (answerKeys.length >= 4) {
+                // Hiển thị 4 đáp án trong grid 2x2
+                const answerItems = answerKeys.slice(0, 4).map(key => {
+                    const answerText = answers[key]?.text || '';
+                    return `<div><strong class="font-sans font-medium">${key}.</strong> <span class="italic font-serif math-content">${escapeHtml(answerText)}</span></div>`;
+                }).join('');
+                answersHtml = `<div class="grid grid-cols-2 gap-y-2 gap-x-4 font-math text-sm pl-4">${answerItems}</div>`;
+            } else if (answerKeys.length > 0) {
+                // Hiển thị các đáp án khác
+                const answerItems = answerKeys.map(key => {
+                    const answerText = answers[key]?.text || '';
+                    return `<div><strong class="font-sans font-medium">${key}.</strong> <span class="italic font-serif math-content">${escapeHtml(answerText)}</span></div>`;
+                }).join('');
+                answersHtml = `<div class="grid grid-cols-2 gap-y-2 gap-x-4 font-math text-sm pl-4">${answerItems}</div>`;
+            }
+            
+            return `
+                <div class="relative group/q pl-2 -ml-2 hover:bg-blue-50/50 rounded transition-colors pr-8 question-block border border-transparent" data-question-id="${q.id}" data-question-number="${questionNumber}">
+                    <div class="absolute right-0 top-0 flex flex-col gap-1 opacity-0 group-hover/q:opacity-100 transition-opacity z-10">
+                        <button class="p-1 hover:bg-blue-100 text-blue-600 rounded" onclick="editQuestionInPaper('${q.id}')" title="Sửa">
+                            <span class="material-symbols-outlined text-[18px]">edit</span>
+                        </button>
+                        <button class="p-1 hover:bg-red-100 text-red-600 rounded" onclick="removeFromPaper('${q.id}')" title="Xóa">
+                            <span class="material-symbols-outlined text-[18px]">delete</span>
+                        </button>
+                    </div>
+                    <p class="font-math text-sm mb-2 leading-relaxed math-content">
+                        <strong class="font-bold font-sans">Câu ${questionNumber}:</strong> ${questionContent}
+                    </p>
+                    ${answersHtml}
+                </div>
+            `;
+        }
+        
+        // Remove question from exam
+        window.removeFromPaper = function(questionId) {
+            if (confirm('Bạn có chắc chắn muốn xóa câu hỏi này khỏi đề thi?')) {
+                const index = selectedQuestions.indexOf(questionId);
+                if (index > -1) {
+                    selectedQuestions.splice(index, 1);
+                    updateExamDisplay();
+                    renderQuestions(allQuestions);
+                }
+            }
+        };
+        
+        // Edit question in exam (có thể mở rộng để chỉnh sửa nội dung)
+        window.editQuestionInPaper = function(questionId) {
+            const question = allQuestions.find(q => q.id === questionId);
+            if (!question) return;
+            
+            // Hiện tại chỉ scroll đến câu hỏi trong danh sách bên trái
+            // Có thể mở rộng để mở modal chỉnh sửa sau
+            const questionCard = document.querySelector(`[onclick="addToPaper('${questionId}')"]`)?.closest('.group');
+            if (questionCard) {
+                questionCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                questionCard.classList.add('ring-2', 'ring-primary', 'ring-offset-2');
+                setTimeout(() => {
+                    questionCard.classList.remove('ring-2', 'ring-primary', 'ring-offset-2');
+                }, 2000);
+            }
+            
+            // TODO: Có thể mở modal để chỉnh sửa nội dung câu hỏi
+            alert('Chức năng chỉnh sửa câu hỏi sẽ được mở rộng sau. Hiện tại bạn có thể xóa và thêm lại câu hỏi khác.');
+        };
+        
+        // Update footer counts
+        function updateFooterCounts() {
+            // Footer hiển thị: số câu đã chọn trong đề thi / tổng số câu hỏi từ database
+            document.getElementById('footer-question-count').textContent = selectedQuestions.length;
+            // Cập nhật tổng số câu hỏi từ database
+            if (totalQuestionsFromDB > 0) {
+                document.getElementById('footer-max-questions').textContent = totalQuestionsFromDB;
+            }
+        }
+        
+        // Update exam title and subject
+        examNameInput.addEventListener('input', function() {
+            const title = this.value || 'ĐỀ THI';
+            document.getElementById('exam-title-display').textContent = title.toUpperCase();
+        });
+        
+        // Update duration
+        durationSelect.addEventListener('change', function() {
+            currentDuration = parseInt(this.value);
+            document.getElementById('duration-display').textContent = currentDuration;
+            document.getElementById('exam-duration-display').textContent = currentDuration;
+            document.getElementById('footer-duration').textContent = currentDuration;
+        });
+        
+        // Update subject when filter changes
+        subjectFilter.addEventListener('change', function() {
+            currentSubject = this.value || 'TOÁN HỌC';
+            document.getElementById('exam-subject-display').textContent = `MÔN: ${currentSubject.toUpperCase()}`;
+            loadQuestions();
+        });
+        
+        // Event listeners for filters
+        searchInput.addEventListener('input', function() {
+            clearTimeout(this.searchTimeout);
+            this.searchTimeout = setTimeout(loadQuestions, 500);
+        });
+        
+        gradeFilter.addEventListener('change', loadQuestions);
+        difficultyFilter.addEventListener('change', loadQuestions);
+        
+        // Zoom controls
+        let zoomLevel = 1;
+        document.getElementById('zoom-in-btn').addEventListener('click', function() {
+            zoomLevel = Math.min(zoomLevel + 0.1, 2);
+            document.querySelector('.max-w-\\[800px\\]').style.transform = `scale(${zoomLevel})`;
+        });
+        
+        document.getElementById('zoom-out-btn').addEventListener('click', function() {
+            zoomLevel = Math.max(zoomLevel - 0.1, 0.5);
+            document.querySelector('.max-w-\\[800px\\]').style.transform = `scale(${zoomLevel})`;
+        });
+        
+        // Initialize
+        loadSubjects();
+        loadQuestions();
+        
+        // Update save time
+        function updateSaveTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('save-time').textContent = timeStr;
+        }
+        setInterval(updateSaveTime, 60000); // Update every minute
+        updateSaveTime();
+    });
+</script>
+</body></html>

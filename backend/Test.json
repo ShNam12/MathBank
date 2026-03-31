@@ -1,0 +1,122 @@
+[
+    {
+      "Topic": ["Đại số tuyến tính", "Chương 4. Trị riêng và Véc tơ riêng", "4.1 Trị riêng và véc tơ riêng của ma trận"],
+      "Questions": [
+        {
+          "content_latex": "Cho ma trận $A = \\begin{pmatrix} {{a}} & {{b}} \\\\ {{c}} & {{d}} \\end{pmatrix}$. Đa thức đặc trưng $P(\\lambda)$ của ma trận $A$ là:",
+          "question_type": "Multiple Choice",
+          "difficulty": "Medium",
+          "answers": [
+              {"content": "$\\lambda^2 - ({{a}} + {{d}})\\lambda + ({{a}}{{d}} - {{b}}{{c}})$", "is_correct": true},
+              {"content": "$\\lambda^2 - ({{a}} - {{d}})\\lambda + ({{a}}{{d}} + {{b}}{{c}})$", "is_correct": false},
+              {"content": "$\\lambda^2 + ({{a}} + {{d}})\\lambda + ({{a}}{{d}} - {{b}}{{c}})$", "is_correct": false},
+              {"content": "$\\lambda^2 - ({{a}}{{d}} - {{b}}{{c}})\\lambda + ({{a}} + {{d}})$", "is_correct": false}
+          ],
+          "explanation_latex": "Đa thức đặc trưng của ma trận cấp 2 được tính bằng công thức: $P(\\lambda) = \\det(A - \\lambda I) = \\lambda^2 - \\text{tr}(A)\\lambda + \\det(A)$. Trong đó $\\text{tr}(A) = a+d$ và $\\det(A) = ad-bc$.",
+          "param_schema": {
+              "a": {"type": "integer", "min": -5, "max": 5, "description": "Phần tử a11"},
+              "b": {"type": "integer", "min": -5, "max": 5, "description": "Phần tử a12"},
+              "c": {"type": "integer", "min": -5, "max": 5, "description": "Phần tử a21"},
+              "d": {"type": "integer", "min": -5, "max": 5, "description": "Phần tử a22"}
+          },
+          "solver": {
+              "code": "def solve(a, b, c, d):\n    \"\"\"\n    Tìm đa thức đặc trưng của ma trận 2x2\n    \"\"\"\n    lam = sp.Symbol('lambda')\n    A = sp.Matrix([[a, b], [c, d]])\n    \n    # Tính đa thức đặc trưng\n    char_poly = A.charpoly(lam)\n    \n    return char_poly.as_expr()",
+              "entry_function": "solve",
+              "dependencies": ["sympy"]
+          }
+        },
+        {
+          "content_latex": "Tìm các trị riêng của ma trận tam giác $A = \\begin{pmatrix} {{k1}} & {{m}} & {{n}} \\\\ 0 & {{k2}} & {{p}} \\\\ 0 & 0 & {{k3}} \\end{pmatrix}$.",
+          "question_type": "Multiple Choice",
+          "difficulty": "Easy",
+          "answers": [
+              {"content": "$\\lambda_1 = {{k1}}, \\lambda_2 = {{k2}}, \\lambda_3 = {{k3}}$", "is_correct": true},
+              {"content": "$\\lambda_1 = 0, \\lambda_2 = {{k2}}, \\lambda_3 = {{k3}}$", "is_correct": false},
+              {"content": "$\\lambda_1 = {{k1}}, \\lambda_2 = {{m}}, \\lambda_3 = {{n}}$", "is_correct": false},
+              {"content": "$\\lambda_1 = -{{k1}}, \\lambda_2 = -{{k2}}, \\lambda_3 = -{{k3}}$", "is_correct": false}
+          ],
+          "explanation_latex": "Đối với ma trận tam giác (trên hoặc dưới), các trị riêng chính là các phần tử nằm trên đường chéo chính.",
+          "param_schema": {
+              "k1": {"type": "integer", "min": -10, "max": 10},
+              "k2": {"type": "integer", "min": -10, "max": 10},
+              "k3": {"type": "integer", "min": -10, "max": 10},
+              "m": {"type": "integer", "min": 1, "max": 5},
+              "n": {"type": "integer", "min": 1, "max": 5},
+              "p": {"type": "integer", "min": 1, "max": 5}
+          },
+          "solver": {
+              "code": "def solve(k1, k2, k3, m, n, p):\n    \"\"\"\n    Trả về danh sách trị riêng của ma trận tam giác\n    \"\"\"\n    # Trị riêng của ma trận tam giác là các phần tử đường chéo\n    eigenvalues = [k1, k2, k3]\n    eigenvalues.sort()\n    return eigenvalues",
+              "entry_function": "solve",
+              "dependencies": ["sympy"]
+          }
+        },
+        {
+          "content_latex": "Tính tổng các trị riêng của ma trận $A = \\begin{pmatrix} {{a11}} & {{a12}} & {{a13}} \\\\ {{a21}} & {{a22}} & {{a23}} \\\\ {{a31}} & {{a32}} & {{a33}} \\end{pmatrix}$.",
+          "question_type": "Short Answer",
+          "difficulty": "Easy",
+          "answers": [],
+          "explanation_latex": "Tổng các trị riêng của một ma trận bằng vết (Trace) của ma trận đó. $\\sum \\lambda_i = \\text{tr}(A) = a_{11} + a_{22} + a_{33} = {{a11}} + {{a22}} + {{a33}}$.",
+          "param_schema": {
+              "a11": {"type": "integer", "min": -10, "max": 10},
+              "a12": {"type": "integer", "min": -10, "max": 10},
+              "a13": {"type": "integer", "min": -10, "max": 10},
+              "a21": {"type": "integer", "min": -10, "max": 10},
+              "a22": {"type": "integer", "min": -10, "max": 10},
+              "a23": {"type": "integer", "min": -10, "max": 10},
+              "a31": {"type": "integer", "min": -10, "max": 10},
+              "a32": {"type": "integer", "min": -10, "max": 10},
+              "a33": {"type": "integer", "min": -10, "max": 10}
+          },
+          "solver": {
+              "code": "def solve(a11, a12, a13, a21, a22, a23, a31, a32, a33):\n    \"\"\"\n    Tính tổng trị riêng (Trace)\n    \"\"\"\n    A = sp.Matrix([\n        [a11, a12, a13],\n        [a21, a22, a23],\n        [a31, a32, a33]\n    ])\n    return A.trace()",
+              "entry_function": "solve",
+              "dependencies": ["sympy"]
+          }
+        },
+        {
+          "content_latex": "Cho ma trận $A$ có một trị riêng là $\\lambda = {{lam}}$. Khi đó, giá trị nào sau đây là một trị riêng của ma trận $A^{ {{k}} }$?",
+          "question_type": "Multiple Choice",
+          "difficulty": "Medium",
+          "answers": [
+              {"content": "${{lam}}^{ {{k}} }$", "is_correct": true},
+              {"content": "${{k}} \\cdot {{lam}}$", "is_correct": false},
+              {"content": "${{lam}} + {{k}}$", "is_correct": false},
+              {"content": "$\\sqrt[ {{k}} ]{ {{lam}} }$", "is_correct": false}
+          ],
+          "explanation_latex": "Nếu $\\lambda$ là trị riêng của $A$ thì $f(\\lambda)$ là trị riêng của $f(A)$. Với $f(x) = x^k$, ta có trị riêng của $A^k$ là $\\lambda^k$. Cụ thể: $({{lam}})^{ {{k}} }$.",
+          "param_schema": {
+              "lam": {"type": "integer", "min": -3, "max": 3, "exclude": [0, 1]},
+              "k": {"type": "integer", "min": 2, "max": 5}
+          },
+          "solver": {
+              "code": "def solve(lam, k):\n    \"\"\"\n    Tính trị riêng của A^k dựa trên trị riêng của A\n    \"\"\"\n    return lam ** k",
+              "entry_function": "solve",
+              "dependencies": ["sympy"]
+          }
+        },
+        {
+          "content_latex": "Tìm một véc tơ riêng ứng với trị riêng $\\lambda = {{a}}$ của ma trận $A = \\begin{pmatrix} {{a}} & 0 \\\\ {{c}} & {{d}} \\end{pmatrix}$ (với $d \\neq a$).",
+          "question_type": "Multiple Choice",
+          "difficulty": "Medium",
+          "answers": [
+              {"content": "$v = ({{val_diff}}, {{c}})$", "is_correct": true},
+              {"content": "$v = (0, 1)$", "is_correct": false},
+              {"content": "$v = (1, 0)$", "is_correct": false},
+              {"content": "$v = ({{c}}, {{val_diff}})$", "is_correct": false}
+          ],
+          "explanation_latex": "Xét phương trình $(A - \\lambda I)X = 0$ với $\\lambda = {{a}}$.\nTa có: $\\begin{pmatrix} 0 & 0 \\\\ {{c}} & {{d}}-{{a}} \\end{pmatrix} \\begin{pmatrix} x_1 \\\\ x_2 \\end{pmatrix} = \\begin{pmatrix} 0 \\\\ 0 \\end{pmatrix}$.\nSuy ra ${{c}}x_1 + ({{d}}-{{a}})x_2 = 0$. Chọn $x_1 = {{d}} - {{a}}$ thì $x_2 = -{{c}}$. Hoặc chọn dạng đơn giản khác tương đương.",
+          "param_schema": {
+              "a": {"type": "integer", "min": 1, "max": 5},
+              "c": {"type": "integer", "min": 1, "max": 5},
+              "d": {"type": "integer", "min": 6, "max": 10},
+              "val_diff": {"type": "integer", "description": "Tham số phụ trợ hiển thị d-a, không cần nhập, hệ thống tự tính nếu generator chạy", "default": 0}
+          },
+          "solver": {
+              "code": "def solve(a, c, d, val_diff=0):\n    \"\"\"\n    Tìm véc tơ riêng ứng với lambda = a\n    Ma trận A = [[a, 0], [c, d]]\n    \"\"\"\n    A = sp.Matrix([[a, 0], [c, d]])\n    vecs = A.eigenvects()\n    \n    # vecs trả về list các tuple (eigenval, multiplicity, [eigenvectors])\n    # Tìm tuple ứng với trị riêng a\n    for val, mult, vectors in vecs:\n        if val == a:\n            # Trả về véc tơ đầu tiên tìm được\n            return vectors[0]\n            \n    return None",
+              "entry_function": "solve",
+              "dependencies": ["sympy"]
+          }
+        }
+      ]
+    }
+  ]

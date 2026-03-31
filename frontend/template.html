@@ -1,0 +1,1758 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Question Bank Manager - Template &amp; Solver</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- KaTeX: Chuyển latex về text thuần -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<!-- style code VS code -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/python/python.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/dracula.min.css">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "primary-dark": "#0f4bc4",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                        "surface-dark": "#192233",
+                        "border-dark": "#324467",
+                        "text-secondary": "#92a4c9",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"],
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for code editor feel */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #101622;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #324467;
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4B5E85;
+        }
+        .code-line {
+            counter-increment: line;
+        }
+        .code-line::before {
+            content: counter(line);
+            display: inline-block;
+            width: 2rem;
+            margin-right: 1rem;
+            text-align: right;
+            color: #4B5E85;
+            user-select: none;
+        }
+        /* 1. Tùy chỉnh khung chứa công thức toán (Block Math) */
+        .katex-display {
+            background-color: #ffffff; /* Màu nền sáng */
+            padding: 1rem;             /* Khoảng cách lề trong */
+            border: 1px solid #e5e7eb; /* Viền xám nhạt */
+            border-radius: 0.5rem;     /* Bo tròn góc */
+            margin: 1.5rem 0;          /* Cách dòng trên dưới */
+            overflow-x: auto;          /* Cho phép cuộn ngang nếu dài */
+            text-align: center;
+        }
+
+        /* Chế độ tối (Dark mode) cho khung công thức */
+        .dark .katex-display {
+            background-color: #192233; /* Màu nền tối (Surface dark) */
+            border-color: #324467;     /* Viền tối */
+        }
+
+        /* 2. Tùy chỉnh danh sách (List) trong phần Preview */
+        #editor-preview ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin-top: 0.5rem;
+        }
+        #editor-preview li {
+            margin-bottom: 0.25rem;
+        }
+        /* Thêm vào trong thẻ <style> */
+        #editor-preview ul {
+            list-style-type: disc !important; /* Bắt buộc hiện dấu chấm tròn */
+            padding-left: 1.5rem !important;  /* Thụt đầu dòng cho danh sách */
+            margin-top: 0.5rem;
+        }
+        #editor-preview li {
+            margin-bottom: 0.5rem;
+            display: list-item; /* Đảm bảo trình duyệt hiểu đây là 1 dòng danh sách */
+        }
+        /* Tinh chỉnh font chữ cho dấu "=" để đồng bộ */
+        .katex { 
+            font-size: 1.1em; 
+        }
+        /* Tinh chỉnh Code trong khung bên phải hiển thị full */
+        /* Thêm vào trong thẻ <style> */
+        .CodeMirror {
+            height: 100% !important; /* Bắt buộc Editor chiếm hết chiều cao khung chứa */
+            font-family: 'JetBrains Mono', monospace; /* Font chữ đẹp cho code */
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-x-hidden antialiased selection:bg-primary/30">
+<div class="relative flex h-screen w-full flex-col overflow-hidden">
+<!-- Top Navigation -->
+<header class="flex-none flex items-center justify-between whitespace-nowrap border-b border-solid border-gray-200 dark:border-border-dark bg-white dark:bg-background-dark px-6 py-3 z-20">
+<div class="flex items-center gap-4">
+<div class="size-8 flex items-center justify-center text-primary bg-primary/10 rounded-lg">
+<span class="material-symbols-outlined text-2xl">calculate</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Question Bank Manager</h2>
+</div>
+<div class="flex flex-1 justify-end gap-8">
+<div class="hidden md:flex items-center gap-9">
+<a class="text-slate-500 hover:text-primary dark:text-text-secondary dark:hover:text-white text-sm font-medium leading-normal transition-colors" href="dashboard.html">Dashboard</a>
+<a class="text-slate-900 dark:text-white text-sm font-medium leading-normal" href="#">Templates</a>
+<a class="text-slate-500 hover:text-primary dark:text-text-secondary dark:hover:text-white text-sm font-medium leading-normal transition-colors" href="#">Solvers</a>
+<a class="text-slate-500 hover:text-primary dark:text-text-secondary dark:hover:text-white text-sm font-medium leading-normal transition-colors" href="#">Settings</a>
+</div>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-9 ring-2 ring-gray-200 dark:ring-border-dark" data-alt="User profile avatar showing a smiling person" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuArt7jfrBTN9l-uLJwc168WavtQCVWGpadqpEnTRPpaIlxGelwZ7mfuU5GQ71HZopDFxzdT-12TKbVY85rHel-7sV0AUEOMPn3mxHadNt1qC5Hgua8srdf2QH7q2yMOmm_3PkoxdQAmYyMr6qtw-TYU00nl20_aYYYlNy6MrRWO31yc_Emo_Da34tKJxfqh_IJf1am3JOX3RxwlCHmEyB_clZJt7CrQ0Zqn0CJFP775HXMq4NMqj7J-IGAJgEB97fQqokzFCJ7Ygg");'></div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<!-- Main Scrollable Area -->
+<main class="flex-1 flex flex-col overflow-y-auto">
+<!-- Breadcrumbs & Header Actions -->
+<div class="flex-none px-6 pt-5 pb-2">
+<div class="flex flex-col gap-4 max-w-[1600px] mx-auto w-full">
+<!-- Breadcrumbs -->
+<div class="flex flex-wrap gap-2 items-center">
+<a class="text-slate-500 dark:text-text-secondary hover:underline text-sm font-medium" href="#">Templates</a>
+<span class="material-symbols-outlined text-slate-400 dark:text-text-secondary text-sm">chevron_right</span>
+<a class="text-slate-500 dark:text-text-secondary hover:underline text-sm font-medium" href="#">Math</a>
+<span class="material-symbols-outlined text-slate-400 dark:text-text-secondary text-sm">chevron_right</span>
+<span class="text-slate-900 dark:text-white text-sm font-medium">Quadratic Equation Solver v2</span>
+<span class="ml-2 px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 text-xs font-bold border border-yellow-500/20">DRAFT</span>
+</div>
+<!-- Page Title & Actions -->
+<div class="flex flex-wrap justify-between items-start gap-4 pb-4 border-b border-gray-200 dark:border-border-dark">
+<div class="flex flex-col gap-1">
+<h1 class="text-slate-900 dark:text-white text-3xl font-black leading-tight tracking-[-0.033em]">Quadratic Equation Solver v2</h1>
+<p class="text-slate-500 dark:text-text-secondary text-sm font-mono">ID: #TMP-2023-884</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center justify-center gap-2 h-10 px-4 rounded-lg border border-red-500/30 hover:bg-red-500/10 text-red-600 dark:text-red-400 text-sm font-bold transition-colors">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+<span>Delete</span>
+</button>
+<!-- Nút Save Changes-->
+<button id="btn-save" class="flex items-center justify-center gap-2 h-10 px-6 rounded-lg bg-primary hover:bg-primary-dark text-white text-sm font-bold shadow-lg shadow-primary/20 transition-all">
+    <span class="material-symbols-outlined text-[20px]">save</span>
+    <span>Save Changes</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- 2-Column Layout -->
+<div class="flex-1 px-6 py-6">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full max-w-[1600px] mx-auto">
+<!-- LEFT COLUMN: Template Editor -->
+<div class="lg:col-span-7 flex flex-col gap-6 h-full overflow-visible">
+<!-- Metadata Card -->
+<div class="bg-white dark:bg-surface-dark rounded-xl border border-gray-200 dark:border-border-dark p-5 shadow-sm">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary">edit_document</span>
+<h3 class="text-lg font-bold text-slate-900 dark:text-white">Template Details</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<label class="flex flex-col gap-1.5">
+<span class="text-sm font-semibold text-slate-700 dark:text-slate-300">Template Name</span>
+<input id="template-name-input" class="form-input w-full rounded-lg border-gray-300 dark:border-border-dark bg-gray-50 dark:bg-background-dark text-slate-900 dark:text-white focus:ring-primary focus:border-primary h-10 px-3 text-sm placeholder:text-slate-400 dark:placeholder:text-text-secondary transition-all" value="Quadratic Equation Solver v2"/>
+</label>
+<label class="flex flex-col gap-1.5">
+<span class="text-sm font-semibold text-slate-700 dark:text-slate-300">Difficulty Level</span>
+<div class="relative">
+<select id="template-difficulty-select" class="form-select w-full rounded-lg border-gray-300 dark:border-border-dark bg-gray-50 dark:bg-background-dark text-slate-900 dark:text-white focus:ring-primary focus:border-primary h-10 px-3 text-sm appearance-none cursor-pointer">
+<option value="Easy">Easy</option>
+<option value="Medium" selected="">Medium</option>
+<option value="Hard">Hard</option>
+<option value="Expert">Expert</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-2.5 pointer-events-none text-slate-500">expand_more</span>
+</div>
+</label>
+<div class="flex flex-col gap-1.5 md:col-span-2">
+    <label for="tag-input" class="text-sm font-semibold text-slate-700 dark:text-slate-300">Tags</label>
+    
+    <div class="relative group">
+        <input 
+            type="text" 
+            id="tag-input"
+            class="form-input w-full rounded-lg border-gray-300 dark:border-border-dark bg-gray-50 dark:bg-background-dark text-slate-900 dark:text-white focus:ring-primary focus:border-primary h-10 px-3 text-sm placeholder:text-slate-400 dark:placeholder:text-text-secondary transition-all" 
+            placeholder="e.g. Algebra, Calculus, Grade 10 (Press Enter)"
+            autocomplete="off"
+        />
+        <input type="hidden" id="hidden-tags-value" name="tags">
+    </div>
+
+    <div id="tags-container" class="flex flex-wrap gap-2 mt-1 min-h-[30px]">
+    </div>
+</div>
+<!-- Parameter Schema Panel -->
+<div class="flex flex-col gap-1.5 md:col-span-2">
+    <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">Tham số (Parameters)</label>
+    <div class="bg-gray-50 dark:bg-background-dark rounded-lg border border-gray-200 dark:border-border-dark p-3">
+        <div class="flex items-center justify-between mb-2">
+            <span class="text-xs text-slate-600 dark:text-text-secondary">Khai báo các biến số trong bài toán</span>
+            <button id="btn-add-param" class="text-xs px-2 py-1 bg-primary text-white rounded hover:bg-primary-dark transition-colors flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">add</span> Thêm tham số
+            </button>
+        </div>
+        <div id="params-container" class="space-y-2 max-h-[200px] overflow-y-auto">
+            <!-- Parameters will be added here dynamically -->
+            <div class="text-xs text-slate-500 dark:text-text-secondary italic text-center py-2">
+                Chưa có tham số nào. Nhấn "Thêm tham số" để bắt đầu.
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+<!-- Content Editor Card -->
+<div class="bg-white dark:bg-surface-dark rounded-xl border border-gray-200 dark:border-border-dark flex flex-col flex-1 min-h-[400px] shadow-sm overflow-hidden">
+<div class="flex items-center justify-between p-3 border-b border-gray-200 dark:border-border-dark bg-gray-50 dark:bg-background-dark/50">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">description</span>
+<h3 class="text-sm font-bold text-slate-900 dark:text-white">Question Content (LaTeX Supported)</h3>
+</div>
+<!-- Toolbar -->
+<div class="flex items-center gap-1">
+<button class="p-1.5 rounded hover:bg-gray-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400"><span class="material-symbols-outlined text-[18px]">format_bold</span></button>
+<button class="p-1.5 rounded hover:bg-gray-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400"><span class="material-symbols-outlined text-[18px]">format_italic</span></button>
+<div class="w-px h-4 bg-gray-300 dark:bg-slate-600 mx-1"></div>
+<button class="p-1.5 rounded hover:bg-gray-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400"><span class="material-symbols-outlined text-[18px]">functions</span></button>
+<button class="p-1.5 rounded hover:bg-gray-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400"><span class="material-symbols-outlined text-[18px]">image</span></button>
+<button class="p-1.5 rounded hover:bg-gray-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400"><span class="material-symbols-outlined text-[18px]">code</span></button>
+</div>
+</div>
+<div class="flex-1 flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-gray-200 dark:divide-border-dark">
+    
+    <textarea 
+        id="editor-input"
+        class="flex-1 bg-transparent p-4 text-sm font-mono leading-relaxed resize-none focus:outline-none text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-600" 
+        placeholder="Type your question here..."></textarea>
+
+    <div class="flex-1 bg-gray-50 dark:bg-[#0c1018] p-4 text-sm text-slate-800 dark:text-slate-200 overflow-auto">
+        <p class="mb-3 text-xs font-bold text-slate-400 uppercase tracking-wider">Preview</p>
+        
+        <div id="editor-preview" class="prose dark:prose-invert max-w-none">
+            </div>
+    </div>
+
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN: Solver Manager (IDE style) -->
+<div class="lg:col-span-5 flex flex-col h-full gap-0 bg-white dark:bg-surface-dark rounded-xl border border-gray-200 dark:border-border-dark shadow-sm overflow-hidden">
+<!-- Solver Tabs -->
+<div class="flex items-center justify-between border-b border-gray-200 dark:border-border-dark bg-gray-50 dark:bg-background-dark/50 px-2">
+<div class="flex gap-1">
+<button class="flex items-center gap-2 px-4 py-3 text-xs font-bold uppercase tracking-wide border-b-[2px] border-primary text-primary bg-white dark:bg-surface-dark rounded-t-lg mt-1">
+<span class="material-symbols-outlined text-[18px]">code</span> Code
+                                    </button>
+<button class="flex items-center gap-2 px-4 py-3 text-xs font-bold uppercase tracking-wide border-b-[2px] border-transparent text-slate-500 dark:text-text-secondary hover:text-slate-800 dark:hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]">history</span> Versions
+                                    </button>
+<button class="flex items-center gap-2 px-4 py-3 text-xs font-bold uppercase tracking-wide border-b-[2px] border-transparent text-slate-500 dark:text-text-secondary hover:text-slate-800 dark:hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[18px]">settings</span> Config
+                                    </button>
+</div>
+<div class="flex items-center gap-2 pr-2">
+<span class="text-xs text-green-500 font-mono flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span> Saved
+                                     </span>
+</div>
+</div>
+<!-- Code Editor Area -->
+<div class="relative flex-1 bg-[#1e1e1e] text-slate-300 font-mono text-sm overflow-hidden flex flex-col group/editor">
+<!-- File Tabs inside editor -->
+<div class="flex bg-[#252526] text-xs">
+<div id="file-tabs-container" class="flex overflow-x-auto">
+    </div>
+<div class="ml-auto px-2 flex items-center text-slate-500">
+    <button id="btn-new-file" class="hover:text-white" title="Tạo file mới">
+        <span class="material-symbols-outlined text-[16px]">add</span>
+    </button>
+    
+    <button id="btn-upload" class="hover:text-white ml-2" title="Upload File">
+        <span class="material-symbols-outlined text-[16px]">upload</span>
+    </button>
+    
+    <input type="file" id="file-input-hidden" style="display: none;" accept=".py,.txt" />
+</div>
+</div>
+<!-- Thêm CodeMirror Editor -->
+<div class="flex-1 relative bg-[#282a36] overflow-hidden">
+    <div id="codemirror-editor" class="h-full w-full text-sm"></div>
+</div>
+</div>
+<!-- Sandbox / Console -->
+<div class="h-[35%] flex flex-col border-t border-gray-700 bg-background-dark text-slate-300">
+<div class="flex items-center justify-between px-3 py-2 bg-[#252526] border-b border-gray-700">
+<span class="text-xs font-bold uppercase text-slate-400 flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">terminal</span> Sandbox Console
+                                    </span>
+<div class="flex gap-2">
+<button id="btn-clear-code" class="text-xs text-gray-400 hover:text-white transition-colors mr-2">
+    Clear
+</button>
+<!-- Nút run test -->
+<button id="btn-run-test" class="flex items-center gap-1 px-3 py-1 rounded bg-green-600 hover:bg-green-500 text-white text-xs font-bold transition-colors">
+    <span class="material-symbols-outlined text-[14px]">play_arrow</span> Run Test
+</button>
+</div>
+</div>
+<div class="flex-1 p-3 font-mono text-sm overflow-auto">
+<!-- Inputs -->
+<div id="variable-container" class="grid grid-cols-3 gap-3 mb-4">
+    </div>
+<!-- Output Log -->
+<div id="console-logs" class="space-y-1 font-mono text-xs">
+    </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // --- PHẦN 1: CẤU HÌNH CHUNG ---
+        const API_URL = "http://127.0.0.1:5000/api";
+        
+        // --- PHẦN 1.1: XỬ LÝ TAGS INPUT ---
+        const tagInput = document.getElementById('tag-input');
+        const tagsContainer = document.getElementById('tags-container');
+        const hiddenTagsValue = document.getElementById('hidden-tags-value');
+        
+        // Mảng chứa các tags (Có thể khởi tạo sẵn nếu cần, vd: ['Math'])
+        let tagsData = ['Math', 'Equations'];
+        
+        // --- PHẦN 1.2: QUẢN LÝ PARAM SCHEMA ---
+        let paramsData = []; // Mảng chứa các tham số đã khai báo
+        
+        // Hàm tạo UI cho 1 tham số
+        function createParamRow(paramData = null) {
+            const paramId = paramData?.id || `param_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            const param = paramData || {
+                id: paramId,
+                name: '',
+                type: 'integer',
+                min: -5,
+                max: 5,
+                exclude: [],
+                default: null,
+                description: ''
+            };
+            
+            const row = document.createElement('div');
+            row.className = 'bg-white dark:bg-background-dark border border-gray-200 dark:border-border-dark rounded p-2 flex items-start gap-2';
+            row.dataset.paramId = paramId;
+            
+            row.innerHTML = `
+                <div class="flex-1 grid grid-cols-12 gap-2 text-xs">
+                    <div class="col-span-3">
+                        <input type="text" class="param-name w-full px-2 py-1 border rounded bg-white dark:bg-background-dark text-slate-900 dark:text-white" 
+                               placeholder="Tên biến" value="${param.name}" />
+                    </div>
+                    <div class="col-span-2">
+                        <select class="param-type w-full px-2 py-1 border rounded bg-white dark:bg-background-dark text-slate-900 dark:text-white">
+                            <option value="integer" ${param.type === 'integer' ? 'selected' : ''}>Integer</option>
+                            <option value="float" ${param.type === 'float' ? 'selected' : ''}>Float</option>
+                            <option value="choice" ${param.type === 'choice' ? 'selected' : ''}>Choice</option>
+                            <option value="boolean" ${param.type === 'boolean' ? 'selected' : ''}>Boolean</option>
+                        </select>
+                    </div>
+                    <div class="col-span-2">
+                        <input type="number" class="param-min w-full px-2 py-1 border rounded bg-white dark:bg-background-dark text-slate-900 dark:text-white" 
+                               placeholder="Min" value="${param.min !== undefined ? param.min : ''}" />
+                    </div>
+                    <div class="col-span-2">
+                        <input type="number" class="param-max w-full px-2 py-1 border rounded bg-white dark:bg-background-dark text-slate-900 dark:text-white" 
+                               placeholder="Max" value="${param.max !== undefined ? param.max : ''}" />
+                    </div>
+                    <div class="col-span-2">
+                        <input type="text" class="param-exclude w-full px-2 py-1 border rounded bg-white dark:bg-background-dark text-slate-900 dark:text-white" 
+                               placeholder="Exclude (VD: 0,1)" value="${param.exclude ? param.exclude.join(',') : ''}" />
+                    </div>
+                    <div class="col-span-1">
+                        <button class="btn-remove-param w-full px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-xs" title="Xóa">
+                            <span class="material-symbols-outlined text-[14px]">delete</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Xử lý xóa tham số
+            row.querySelector('.btn-remove-param').addEventListener('click', () => {
+                row.remove();
+                paramsData = paramsData.filter(p => p.id !== paramId);
+                updateParamsContainer();
+                showCodeSuggestionButton(); // Hiển thị lại nút đề xuất
+            });
+            
+            return row;
+        }
+        
+        // Hàm cập nhật container tham số
+        function updateParamsContainer() {
+            const container = document.getElementById('params-container');
+            if (!container) return;
+            
+            if (container.querySelectorAll('[data-param-id]').length === 0) {
+                container.innerHTML = '<div class="text-xs text-slate-500 dark:text-text-secondary italic text-center py-2">Chưa có tham số nào. Nhấn "Thêm tham số" để bắt đầu.</div>';
+            }
+        }
+        
+        // Hàm thu thập param_schema từ UI
+        function collectParamSchema() {
+            const schema = {};
+            const container = document.getElementById('params-container');
+            if (!container) return schema;
+            
+            container.querySelectorAll('[data-param-id]').forEach(row => {
+                const name = row.querySelector('.param-name').value.trim();
+                if (!name) return; // Bỏ qua nếu không có tên
+                
+                const type = row.querySelector('.param-type').value;
+                const minInput = row.querySelector('.param-min').value;
+                const maxInput = row.querySelector('.param-max').value;
+                const excludeInput = row.querySelector('.param-exclude').value.trim();
+                
+                const paramDef = {
+                    type: type,
+                    min: minInput ? (type === 'integer' ? parseInt(minInput) : parseFloat(minInput)) : null,
+                    max: maxInput ? (type === 'integer' ? parseInt(maxInput) : parseFloat(maxInput)) : null,
+                    exclude: excludeInput ? excludeInput.split(',').map(s => {
+                        const trimmed = s.trim();
+                        return type === 'integer' ? parseInt(trimmed) : parseFloat(trimmed);
+                    }).filter(v => !isNaN(v)) : null,
+                    default: null,
+                    description: ''
+                };
+                
+                // Loại bỏ null values
+                Object.keys(paramDef).forEach(key => {
+                    if (paramDef[key] === null) delete paramDef[key];
+                });
+                
+                schema[name] = paramDef;
+            });
+            
+            return schema;
+        }
+        
+        // Kết nối nút "Thêm tham số"
+        const btnAddParam = document.getElementById('btn-add-param');
+        if (btnAddParam) {
+            btnAddParam.addEventListener('click', () => {
+                const container = document.getElementById('params-container');
+                if (!container) return;
+                
+                // Xóa placeholder nếu có
+                if (container.querySelector('.italic')) {
+                    container.innerHTML = '';
+                }
+                
+                const row = createParamRow();
+                container.appendChild(row);
+                paramsData.push({ id: row.dataset.paramId });
+                showCodeSuggestionButton(); // Hiển thị nút đề xuất khi thêm tham số mới
+            });
+        }
+        
+        // Khởi tạo container
+        updateParamsContainer();
+        
+        // --- HÀM TỰ ĐỘNG SINH CODE generate_variables() TỪ PARAM_SCHEMA ---
+        function generateCodeFromParams() {
+            const schema = collectParamSchema();
+            if (Object.keys(schema).length === 0) {
+                return null; // Không có tham số nào
+            }
+            
+            let code = "import random\n\n";
+            code += "def generate_variables():\n";
+            code += "    \"\"\"\n";
+            code += "    Khởi tạo các tham số từ param_schema\n";
+            code += "    \"\"\"\n";
+            
+            // Tạo code cho từng tham số
+            const paramNames = Object.keys(schema);
+            const returnDict = {};
+            
+            paramNames.forEach(paramName => {
+                const paramDef = schema[paramName];
+                const type = paramDef.type || 'integer';
+                const min = paramDef.min;
+                const max = paramDef.max;
+                const exclude = paramDef.exclude || [];
+                
+                // Tạo code sinh giá trị
+                if (type === 'integer') {
+                    if (min !== null && max !== null) {
+                        code += `    ${paramName} = random.randint(${min}, ${max})\n`;
+                        // Xử lý exclude
+                        if (exclude.length > 0) {
+                            code += `    while ${paramName} in [${exclude.join(', ')}]:\n`;
+                            code += `        ${paramName} = random.randint(${min}, ${max})\n`;
+                        }
+                    } else {
+                        code += `    ${paramName} = random.randint(-5, 5)  # TODO: Điều chỉnh range\n`;
+                    }
+                } else if (type === 'float') {
+                    if (min !== null && max !== null) {
+                        code += `    ${paramName} = random.uniform(${min}, ${max})\n`;
+                        if (exclude.length > 0) {
+                            code += `    while ${paramName} in [${exclude.join(', ')}]:\n`;
+                            code += `        ${paramName} = random.uniform(${min}, ${max})\n`;
+                        }
+                    } else {
+                        code += `    ${paramName} = random.uniform(-5.0, 5.0)  # TODO: Điều chỉnh range\n`;
+                    }
+                } else if (type === 'boolean') {
+                    code += `    ${paramName} = random.choice([True, False])\n`;
+                } else if (type === 'choice') {
+                    // Choice type cần có danh sách lựa chọn, tạm thời dùng default
+                    code += `    ${paramName} = random.choice([0, 1])  # TODO: Điều chỉnh choices\n`;
+                }
+                
+                returnDict[paramName] = paramName;
+            });
+            
+            // Tạo return statement
+            code += `    \n    return {\n`;
+            paramNames.forEach((paramName, index) => {
+                const comma = index < paramNames.length - 1 ? ',' : '';
+                code += `        "${paramName}": ${paramName}${comma}\n`;
+            });
+            code += `    }\n`;
+            
+            return code;
+        }
+        
+        // Hàm tự động cập nhật code khi tham số thay đổi
+        function autoUpdateGenerateFunction() {
+            const generatedCode = generateCodeFromParams();
+            if (!generatedCode) {
+                alert("Không có tham số nào để sinh code!");
+                return;
+            }
+            
+            // Kiểm tra codeEditor đã được khởi tạo chưa
+            if (typeof codeEditor === 'undefined' || !codeEditor) {
+                alert("Code editor chưa sẵn sàng. Vui lòng đợi một chút và thử lại.");
+                return;
+            }
+            
+            const currentCode = codeEditor.getValue();
+            
+            // Kiểm tra xem đã có hàm generate_variables chưa
+            const hasGenerateFunction = /def\s+generate_variables\s*\(/i.test(currentCode);
+            
+            if (hasGenerateFunction) {
+                // Thay thế hàm cũ bằng hàm mới
+                const regex = /def\s+generate_variables\s*\([^)]*\):[\s\S]*?(?=\n\ndef\s|\n\nimport\s|\n\n#|\Z)/i;
+                const newCode = currentCode.replace(regex, generatedCode.split('\n').slice(1).join('\n'));
+                
+                // Hỏi user có muốn cập nhật không
+                if (confirm("Phát hiện thay đổi tham số. Bạn có muốn tự động cập nhật hàm generate_variables()?")) {
+                    codeEditor.setValue(newCode);
+                }
+            } else {
+                // Chưa có hàm, đề xuất thêm vào
+                if (confirm("Bạn có muốn tự động tạo hàm generate_variables() từ các tham số đã khai báo?")) {
+                    const newCode = generatedCode + "\n\n# Hàm giải bài toán\n# def solve(...):\n#     pass\n";
+                    if (currentCode.trim() === '') {
+                        codeEditor.setValue(newCode);
+                    } else {
+                        codeEditor.setValue(generatedCode + "\n\n" + currentCode);
+                    }
+                }
+            }
+        }
+        
+        // Gắn sự kiện tự động cập nhật khi tham số thay đổi
+        function attachParamChangeListeners() {
+            const container = document.getElementById('params-container');
+            if (!container) return;
+            
+            // Sử dụng event delegation để bắt mọi thay đổi trong params-container
+            container.addEventListener('input', (e) => {
+                if (e.target.classList.contains('param-name') || 
+                    e.target.classList.contains('param-type') || 
+                    e.target.classList.contains('param-min') || 
+                    e.target.classList.contains('param-max') || 
+                    e.target.classList.contains('param-exclude')) {
+                    // Debounce: chờ 1 giây sau khi user ngừng gõ
+                    clearTimeout(window.paramUpdateTimeout);
+                    window.paramUpdateTimeout = setTimeout(() => {
+                        // Không tự động cập nhật, chỉ hiển thị nút đề xuất
+                        showCodeSuggestionButton();
+                    }, 1000);
+                }
+            });
+        }
+        
+        // --- HÀM PARSE CODE ĐỂ EXTRACT BIẾN TỪ generate_variables() ---
+        function parseGenerateVariablesFromCode(code) {
+            if (!code || typeof code !== 'string') {
+                return null;
+            }
+            
+            // Tìm hàm generate_variables()
+            const generateFunctionMatch = code.match(/def\s+generate_variables\s*\([^)]*\):([\s\S]*?)(?=\n\ndef\s|\n\nimport\s|\n\n#|\Z)/i);
+            if (!generateFunctionMatch) {
+                return null; // Không tìm thấy hàm
+            }
+            
+            const functionBody = generateFunctionMatch[1];
+            const variables = {};
+            
+            // Bước 1: Tìm tất cả các biến được gán trong hàm (trước return)
+            // Pattern: var_name = random.randint(...) hoặc var_name = random.uniform(...)
+            const assignmentPattern = /(\w+)\s*=\s*random\.(randint|uniform|choice)\(([^)]+)\)/g;
+            let match;
+            const assignmentVars = {};
+            
+            while ((match = assignmentPattern.exec(functionBody)) !== null) {
+                const varName = match[1];
+                const method = match[2];
+                const params = match[3];
+                
+                let min = null, max = null;
+                
+                if (method === 'randint' || method === 'uniform') {
+                    const paramsMatch = params.match(/(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)/);
+                    if (paramsMatch) {
+                        min = paramsMatch[1].includes('.') ? parseFloat(paramsMatch[1]) : parseInt(paramsMatch[1]);
+                        max = paramsMatch[2].includes('.') ? parseFloat(paramsMatch[2]) : parseInt(paramsMatch[2]);
+                    }
+                }
+                
+                assignmentVars[varName] = {
+                    name: varName,
+                    type: method === 'uniform' ? 'float' : 'integer',
+                    min: min,
+                    max: max,
+                    inferred: true
+                };
+            }
+            
+            // Bước 2: Tìm return statement và extract các key trong dict
+            // Hỗ trợ cả return trên một dòng và nhiều dòng
+            const returnMatch = functionBody.match(/return\s*\{([\s\S]*?)\}/);
+            if (returnMatch) {
+                const returnContent = returnMatch[1];
+                
+                // Trường hợp 1: "key": random.randint(...) hoặc "key": random.uniform(...)
+                // Pattern: "key": random.method(...)
+                const directAssignmentPattern = /["']([^"']+)["']\s*:\s*random\.(randint|uniform|choice)\(([^)]+)\)/g;
+                let directMatch;
+                
+                while ((directMatch = directAssignmentPattern.exec(returnContent)) !== null) {
+                    const varName = directMatch[1];
+                    const method = directMatch[2];
+                    const params = directMatch[3];
+                    
+                    let min = null, max = null;
+                    
+                    if (method === 'randint' || method === 'uniform') {
+                        const paramsMatch = params.match(/(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)/);
+                        if (paramsMatch) {
+                            min = paramsMatch[1].includes('.') ? parseFloat(paramsMatch[1]) : parseInt(paramsMatch[1]);
+                            max = paramsMatch[2].includes('.') ? parseFloat(paramsMatch[2]) : parseInt(paramsMatch[2]);
+                        }
+                    }
+                    
+                    variables[varName] = {
+                        name: varName,
+                        type: method === 'uniform' ? 'float' : 'integer',
+                        min: min,
+                        max: max,
+                        inferred: true
+                    };
+                }
+                
+                // Trường hợp 2: "key": value (value là tên biến đã được gán trước đó)
+                // Pattern: "key": var_name
+                const keyValuePattern = /["']([^"']+)["']\s*:\s*(\w+)/g;
+                let kvMatch;
+                
+                // Reset regex lastIndex để scan lại từ đầu
+                keyValuePattern.lastIndex = 0;
+                
+                while ((kvMatch = keyValuePattern.exec(returnContent)) !== null) {
+                    const varName = kvMatch[1];
+                    const varValue = kvMatch[2];
+                    
+                    // Bỏ qua nếu đã được xử lý ở trường hợp 1
+                    if (variables[varName]) {
+                        continue;
+                    }
+                    
+                    // Nếu biến này đã được gán trước đó, dùng thông tin từ assignment
+                    if (assignmentVars[varValue]) {
+                        variables[varName] = {
+                            ...assignmentVars[varValue],
+                            name: varName // Dùng tên từ return dict
+                        };
+                    } else {
+                        // Nếu không tìm thấy assignment, chỉ lưu tên
+                        variables[varName] = {
+                            name: varName,
+                            inferred: true
+                        };
+                    }
+                }
+            }
+            
+            // Bước 3: Nếu không tìm thấy trong return, dùng các biến từ assignment
+            if (Object.keys(variables).length === 0 && Object.keys(assignmentVars).length > 0) {
+                Object.assign(variables, assignmentVars);
+            }
+            
+            return Object.keys(variables).length > 0 ? variables : null;
+        }
+        
+        // --- HÀM ĐỒNG BỘ PARAMS TỪ CODE SANG UI ---
+        function syncParamsFromCode() {
+            if (typeof codeEditor === 'undefined' || !codeEditor) {
+                return;
+            }
+            
+            const code = codeEditor.getValue();
+            const parsedVars = parseGenerateVariablesFromCode(code);
+            
+            if (!parsedVars || Object.keys(parsedVars).length === 0) {
+                return; // Không có biến nào được tìm thấy
+            }
+            
+            const container = document.getElementById('params-container');
+            if (!container) return;
+            
+            // Lấy danh sách tham số hiện tại
+            const currentParams = {};
+            container.querySelectorAll('[data-param-id]').forEach(row => {
+                const name = row.querySelector('.param-name').value.trim();
+                if (name) {
+                    currentParams[name] = {
+                        id: row.dataset.paramId,
+                        name: name,
+                        type: row.querySelector('.param-type').value,
+                        min: row.querySelector('.param-min').value ? parseFloat(row.querySelector('.param-min').value) : null,
+                        max: row.querySelector('.param-max').value ? parseFloat(row.querySelector('.param-max').value) : null,
+                        exclude: row.querySelector('.param-exclude').value.trim() ? row.querySelector('.param-exclude').value.split(',').map(s => s.trim()).filter(s => s) : []
+                    };
+                }
+            });
+            
+            // Kiểm tra xem có biến mới nào không
+            const newVars = [];
+            Object.keys(parsedVars).forEach(varName => {
+                if (!currentParams[varName]) {
+                    newVars.push({
+                        name: varName,
+                        ...parsedVars[varName]
+                    });
+                }
+            });
+            
+            // Nếu có biến mới, hiển thị nút đề xuất
+            if (newVars.length > 0) {
+                showParamSuggestionButton(newVars);
+            }
+        }
+        
+        // --- HÀM HIỂN THỊ NÚT ĐỀ XUẤT THÊM PARAMS TỪ CODE ---
+        function showParamSuggestionButton(newVars) {
+            // Xóa nút cũ nếu có
+            const oldBtn = document.getElementById('btn-suggest-params');
+            if (oldBtn) oldBtn.remove();
+            
+            const container = document.getElementById('params-container');
+            if (!container) return;
+            
+            // Tạo nút đề xuất
+            const suggestBtn = document.createElement('button');
+            suggestBtn.id = 'btn-suggest-params';
+            suggestBtn.className = 'mt-2 w-full px-3 py-2 bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/30 rounded text-xs font-bold flex items-center justify-center gap-2 transition-colors';
+            suggestBtn.innerHTML = `
+                <span class="material-symbols-outlined text-[14px]">auto_fix_high</span>
+                Phát hiện ${newVars.length} biến mới từ code. Nhấn để thêm vào tham số
+            `;
+            suggestBtn.onclick = () => {
+                // Thêm các biến mới vào params-container
+                newVars.forEach(varData => {
+                    const paramData = {
+                        id: `param_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                        name: varData.name,
+                        type: varData.type || 'integer',
+                        min: varData.min !== null && varData.min !== undefined ? varData.min : -5,
+                        max: varData.max !== null && varData.max !== undefined ? varData.max : 5,
+                        exclude: [],
+                        default: null,
+                        description: ''
+                    };
+                    
+                    // Xóa placeholder nếu có
+                    if (container.querySelector('.italic')) {
+                        container.innerHTML = '';
+                    }
+                    
+                    const row = createParamRow(paramData);
+                    container.appendChild(row);
+                    paramsData.push({ id: row.dataset.paramId });
+                });
+                
+                suggestBtn.remove();
+                showCodeSuggestionButton(); // Có thể cần cập nhật lại nút code suggestion
+            };
+            
+            // Chèn vào sau phần Parameters (trong cùng card)
+            const paramSection = container.closest('.bg-gray-50, .bg-background-dark');
+            if (paramSection) {
+                paramSection.appendChild(suggestBtn);
+            } else {
+                // Fallback: chèn vào sau params-container
+                container.parentElement.appendChild(suggestBtn);
+            }
+        }
+        
+        // Hiển thị nút đề xuất sinh code
+        function showCodeSuggestionButton() {
+            // Xóa nút cũ nếu có
+            const oldBtn = document.getElementById('btn-suggest-code');
+            if (oldBtn) oldBtn.remove();
+            
+            const container = document.getElementById('params-container');
+            if (!container) return;
+            
+            const schema = collectParamSchema();
+            if (Object.keys(schema).length === 0) {
+                return; // Không có tham số thì không hiển thị nút
+            }
+            
+            // Kiểm tra xem đã có tham số hợp lệ (có tên) chưa
+            const validParams = Object.keys(schema).filter(name => name.trim() !== '');
+            if (validParams.length === 0) return;
+            
+            // Tạo nút đề xuất
+            const suggestBtn = document.createElement('button');
+            suggestBtn.id = 'btn-suggest-code';
+            suggestBtn.className = 'mt-2 w-full px-3 py-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 rounded text-xs font-bold flex items-center justify-center gap-2 transition-colors';
+            suggestBtn.innerHTML = `
+                <span class="material-symbols-outlined text-[14px]">auto_fix_high</span>
+                Tự động sinh code generate_variables()
+            `;
+            suggestBtn.onclick = () => {
+                autoUpdateGenerateFunction();
+                suggestBtn.remove();
+            };
+            
+            // Chèn vào sau phần Parameters (trong cùng card)
+            const paramSection = container.closest('.bg-gray-50, .bg-background-dark');
+            if (paramSection) {
+                paramSection.appendChild(suggestBtn);
+            } else {
+                // Fallback: chèn vào sau params-container
+                container.parentElement.appendChild(suggestBtn);
+            }
+        }
+        
+        // Gọi hàm gắn listener sau khi DOM ready
+        // Lưu ý: showCodeSuggestionButton() sẽ được gọi sau khi codeEditor được khởi tạo 
+
+        // Hàm render Tags ra giao diện
+        function renderTags() {
+            tagsContainer.innerHTML = ''; // Xóa cũ
+            const tagsString = [];
+
+            tagsData.forEach((tag, index) => {
+                tagsString.push(tag);
+                
+                // Tạo phần tử Tag (Style giống ảnh bạn gửi)
+                const tagEl = document.createElement('span');
+                tagEl.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#1e293b] text-white text-xs font-medium border border-slate-600 shadow-sm transition-all animate-in fade-in zoom-in duration-200';
+                tagEl.innerHTML = `
+                    ${tag}
+                    <button onclick="removeTag(${index})" class="text-slate-400 hover:text-red-400 transition-colors focus:outline-none">
+                        <span class="material-symbols-outlined text-[14px] font-bold">close</span>
+                    </button>
+                `;
+                tagsContainer.appendChild(tagEl);
+            });
+
+            // Cập nhật giá trị vào input ẩn (để gửi form sau này)
+            if(hiddenTagsValue) hiddenTagsValue.value = tagsString.join(',');
+        }
+
+        // Hàm xóa Tag (Gắn vào window để gọi được từ HTML string)
+        window.removeTag = function(index) {
+            tagsData.splice(index, 1);
+            renderTags();
+        };
+
+        // Bắt sự kiện Enter trong ô input
+        if (tagInput) {
+            tagInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); // Chặn submit form
+                    
+                    const val = tagInput.value.trim();
+                    
+                    // Kiểm tra: không rỗng và chưa tồn tại
+                    if (val && !tagsData.includes(val)) {
+                        tagsData.push(val);
+                        renderTags();
+                        tagInput.value = ''; // Reset ô nhập
+                    } else if (tagsData.includes(val)) {
+                        // Hiệu ứng cảnh báo nếu trùng (Optional)
+                        tagInput.classList.add('border-red-500', 'focus:border-red-500', 'focus:ring-red-500');
+                        setTimeout(() => {
+                            tagInput.classList.remove('border-red-500', 'focus:border-red-500', 'focus:ring-red-500');
+                        }, 500);
+                    }
+                }
+            });
+            
+            // Xử lý nút Backspace để xóa tag cuối cùng nếu ô input rỗng
+            tagInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && tagInput.value === '' && tagsData.length > 0) {
+                    tagsData.pop();
+                    renderTags();
+                }
+            });
+        }
+
+        // Gọi render lần đầu
+        renderTags();
+        
+        // --- PHẦN 2: XỬ LÝ EDITOR TEMPLATE (CỘT TRÁI) ---
+        const inputElement = document.getElementById('editor-input');
+        const previewElement = document.getElementById('editor-preview');
+
+        if (inputElement && previewElement) {
+            function updatePreview() {
+                let content = inputElement.value;
+                
+                // Hàm helper để escape HTML
+                function escapeHtml(text) {
+                    const div = document.createElement('div');
+                    div.textContent = text;
+                    return div.innerHTML;
+                }
+                
+                // Bước 1: Xử lý placeholder trong LaTeX - thay bằng \text{var} để KaTeX render đúng
+                // Strategy: Thay {{var}} bằng \text{var} để KaTeX render như text trong math mode, giữ nguyên cấu trúc
+                const placeholderList = [];
+                const placeholderSet = new Set(); // Để tránh duplicate
+                
+                // Xử lý inline math $...$ (non-greedy để match đúng từng block)
+                content = content.replace(/\$([^$]+?)\$/g, (match, mathContent) => {
+                    const processed = mathContent.replace(/\{\{([^}]+)\}\}/g, (phMatch, varName) => {
+                        const varNameTrimmed = varName.trim();
+                        if (!placeholderSet.has(varNameTrimmed)) {
+                            placeholderList.push({
+                                varName: varNameTrimmed,
+                                // Dùng \text{} để KaTeX render đúng và giữ nguyên cấu trúc
+                                latexReplacement: `\\text{${varNameTrimmed}}`
+                            });
+                            placeholderSet.add(varNameTrimmed);
+                        }
+                        return `\\text{${varNameTrimmed}}`;
+                    });
+                    return `$${processed}$`;
+                });
+                
+                // Xử lý display math $$...$$
+                content = content.replace(/\$\$([\s\S]+?)\$\$/g, (match, mathContent) => {
+                    const processed = mathContent.replace(/\{\{([^}]+)\}\}/g, (phMatch, varName) => {
+                        const varNameTrimmed = varName.trim();
+                        if (!placeholderSet.has(varNameTrimmed)) {
+                            placeholderList.push({
+                                varName: varNameTrimmed,
+                                latexReplacement: `\\text{${varNameTrimmed}}`
+                            });
+                            placeholderSet.add(varNameTrimmed);
+                        }
+                        return `\\text{${varNameTrimmed}}`;
+                    });
+                    return `$$${processed}$$`;
+                });
+                
+                // Xử lý display math \[...\]
+                content = content.replace(/\\\[([\s\S]+?)\\\]/g, (match, mathContent) => {
+                    const processed = mathContent.replace(/\{\{([^}]+)\}\}/g, (phMatch, varName) => {
+                        const varNameTrimmed = varName.trim();
+                        if (!placeholderSet.has(varNameTrimmed)) {
+                            placeholderList.push({
+                                varName: varNameTrimmed,
+                                latexReplacement: `\\text{${varNameTrimmed}}`
+                            });
+                            placeholderSet.add(varNameTrimmed);
+                        }
+                        return `\\text{${varNameTrimmed}}`;
+                    });
+                    return `\\[${processed}\\]`;
+                });
+                
+                // Bước 1.5: Bảo vệ LaTeX blocks trước khi marked.js parse (giữ nguyên \\)
+                // Sử dụng HTML comment để bảo vệ LaTeX blocks (marked.js sẽ không xử lý)
+                // Map để lưu LaTeX blocks với placeholder ID
+                const latexBlocks = new Map();
+                let blockCounter = 0;
+                
+                // Tìm và thay thế tạm các LaTeX blocks bằng HTML comment placeholder
+                // Xử lý display math $$...$$ trước (quan trọng cho ma trận)
+                content = content.replace(/\$\$([\s\S]+?)\$\$/g, (match, mathContent) => {
+                    const placeholderId = `LATEX_BLOCK_${blockCounter}`;
+                    const placeholder = `<!--${placeholderId}-->`;
+                    latexBlocks.set(placeholderId, `$$${mathContent}$$`);
+                    blockCounter++;
+                    return placeholder;
+                });
+                
+                // Xử lý display math \[...\]
+                content = content.replace(/\\\[([\s\S]+?)\\\]/g, (match, mathContent) => {
+                    const placeholderId = `LATEX_BLOCK_${blockCounter}`;
+                    const placeholder = `<!--${placeholderId}-->`;
+                    latexBlocks.set(placeholderId, `\\[${mathContent}\\]`);
+                    blockCounter++;
+                    return placeholder;
+                });
+                
+                // Xử lý inline math $...$ (chỉ bảo vệ nếu có \\ hoặc môi trường ma trận)
+                content = content.replace(/\$([^$]+?)\$/g, (match, mathContent) => {
+                    // Chỉ bảo vệ nếu có \\ hoặc các môi trường ma trận
+                    if (mathContent.includes('\\\\') || 
+                        mathContent.includes('\\begin{') || 
+                        mathContent.includes('pmatrix') ||
+                        mathContent.includes('bmatrix') ||
+                        mathContent.includes('matrix')) {
+                        const placeholderId = `LATEX_BLOCK_${blockCounter}`;
+                        const placeholder = `<!--${placeholderId}-->`;
+                        latexBlocks.set(placeholderId, `$${mathContent}$`);
+                        blockCounter++;
+                        return placeholder;
+                    }
+                    return match; // Giữ nguyên nếu không có \\ hoặc môi trường đặc biệt
+                });
+                
+                // Bước 2: Render Markdown (LaTeX blocks đã được bảo vệ bằng placeholder)
+                previewElement.innerHTML = marked.parse(content);
+                
+                // Bước 2.5: Khôi phục LaTeX blocks sau khi marked.js parse xong
+                // Tìm tất cả HTML comment placeholder và thay bằng LaTeX gốc
+                latexBlocks.forEach((originalLatex, placeholderId) => {
+                    // Tìm HTML comment trong DOM
+                    const commentPlaceholder = `<!--${placeholderId}-->`;
+                    
+                    // Tìm trong innerHTML (HTML comment sẽ được giữ nguyên bởi marked.js)
+                    if (previewElement.innerHTML.includes(commentPlaceholder)) {
+                        previewElement.innerHTML = previewElement.innerHTML.replace(
+                            commentPlaceholder, 
+                            originalLatex
+                        );
+                    }
+                    
+                    // Fallback: Tìm trong tất cả comment nodes của DOM
+                    const walker = document.createTreeWalker(
+                        previewElement,
+                        NodeFilter.SHOW_COMMENT,
+                        null,
+                        false
+                    );
+                    
+                    let commentNode;
+                    while (commentNode = walker.nextNode()) {
+                        if (commentNode.textContent === placeholderId) {
+                            // Thay comment bằng text node chứa LaTeX
+                            const textNode = document.createTextNode(originalLatex);
+                            commentNode.parentNode.replaceChild(textNode, commentNode);
+                        }
+                    }
+                });
+                
+                // Bước 3: Render LaTeX với KaTeX
+                try {
+                    renderMathInElement(previewElement, {
+                        delimiters: [
+                            {left: '$$', right: '$$', display: true},
+                            {left: '$', right: '$', display: false},
+                            {left: '\\(', right: '\\)', display: false},
+                            {left: '\\[', right: '\\]', display: true}
+                        ],
+                        throwOnError: false,
+                        strict: false
+                    });
+                } catch (e) {
+                    console.warn('KaTeX render error:', e);
+                }
+                
+                // Bước 4: Sau khi KaTeX render xong, thay \text{var} bằng badge placeholder
+                setTimeout(() => {
+                    placeholderList.forEach(({varName, latexReplacement}) => {
+                        const badge = `<span class="bg-primary/10 text-primary px-1.5 py-0.5 rounded font-mono text-xs border border-primary/20 align-middle font-bold mx-1 inline-block">{{${escapeHtml(varName)}}}</span>`;
+                        
+                        // Tìm tất cả katex elements
+                        previewElement.querySelectorAll('.katex, .katex-display').forEach(katexEl => {
+                            // KaTeX render \text{var} thành HTML, tìm text nodes chứa varName
+                            const walker = document.createTreeWalker(
+                                katexEl,
+                                NodeFilter.SHOW_TEXT,
+                                null,
+                                false
+                            );
+                            
+                            const nodesToReplace = [];
+                            let node;
+                            while (node = walker.nextNode()) {
+                                const text = node.textContent;
+                                // Match chính xác varName (không phải substring)
+                                // Ví dụ: "a11" match, nhưng "ka11" hoặc "a11b" không match
+                                if (text) {
+                                    const trimmed = text.trim();
+                                    // Chỉ match nếu text chính xác là varName
+                                    if (trimmed === varName || text === varName) {
+                                        // Kiểm tra thêm: không phải là substring của từ khác
+                                        // Kiểm tra ký tự trước và sau node
+                                        const prevSibling = node.previousSibling;
+                                        const nextSibling = node.nextSibling;
+                                        const prevText = prevSibling ? (prevSibling.textContent || '').slice(-1) : '';
+                                        const nextText = nextSibling ? (nextSibling.textContent || '').charAt(0) : '';
+                                        
+                                        // Chỉ thay nếu không phải substring (không có ký tự alphanumeric trước/sau)
+                                        const isWordBoundary = (!prevText || !/[a-zA-Z0-9_]/.test(prevText)) && 
+                                                               (!nextText || !/[a-zA-Z0-9_]/.test(nextText));
+                                        
+                                        if (isWordBoundary) {
+                                            nodesToReplace.push(node);
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            // Thay thế text nodes bằng badge
+                            nodesToReplace.forEach(textNode => {
+                                const parent = textNode.parentElement;
+                                if (parent && parent.tagName !== 'SCRIPT' && parent.tagName !== 'STYLE') {
+                                    // Tạo wrapper span với badge
+                                    const wrapper = document.createElement('span');
+                                    wrapper.innerHTML = badge;
+                                    // Giữ nguyên whitespace nếu có
+                                    const originalText = textNode.textContent;
+                                    if (originalText.startsWith(' ')) {
+                                        wrapper.style.marginLeft = '0.25em';
+                                    }
+                                    if (originalText.endsWith(' ')) {
+                                        wrapper.style.marginRight = '0.25em';
+                                    }
+                                    textNode.replaceWith(wrapper);
+                                }
+                            });
+                        });
+                    });
+                    
+                    // Bước 5: Xử lý placeholder không nằm trong LaTeX (fallback)
+                    // CHỈ thay thế {{var}} pattern, KHÔNG thay text thường
+                    previewElement.innerHTML = previewElement.innerHTML.replace(/\{\{([^}]+)\}\}/g, function(match, variableName) {
+                        return `<span class="bg-primary/10 text-primary px-1.5 py-0.5 rounded font-mono text-xs border border-primary/20 align-middle font-bold mx-1 inline-block">{{${escapeHtml(variableName)}}}</span>`;
+                    });
+                }, 300);
+            }
+
+            // Gắn sự kiện nhập liệu
+            inputElement.addEventListener('input', updatePreview);
+            updatePreview(); // Chạy lần đầu
+        }
+
+        // --- PHẦN 3: XỬ LÝ PYTHON EDITOR & BACKEND (CỘT PHẢI) ---
+        const editorContainer = document.getElementById('codemirror-editor'); // <--- SỬA LẠI CHO ĐÚNG ID HTML
+        const codeEditor = CodeMirror(editorContainer, {
+            mode: "python",
+            theme: "dracula",
+            lineNumbers: true,
+            indentUnit: 4,
+            matchBrackets: true,
+            autoCloseBrackets: true,
+            viewportMargin: Infinity
+        });
+        const btnSave = document.getElementById('btn-save');
+        const btnRun = document.getElementById('btn-run-test');
+
+        // Hàm log thông báo
+        function logToConsole(message) {
+            alert(message); // Có thể thay bằng việc in vào div console đen sau này
+        }
+
+        if (codeEditor) {
+            // Gắn listener cho param changes sau khi codeEditor đã sẵn sàng
+            attachParamChangeListeners();
+            
+            // Gắn listener cho code changes để tự động sync params từ code
+            codeEditor.on('change', function(editor, change) {
+                // Debounce: chờ 1.5 giây sau khi user ngừng gõ
+                clearTimeout(window.codeSyncTimeout);
+                window.codeSyncTimeout = setTimeout(() => {
+                    syncParamsFromCode();
+                }, 1500);
+            });
+            
+            // Kiểm tra và hiển thị nút đề xuất nếu đã có tham số
+            setTimeout(() => {
+                showCodeSuggestionButton();
+                // Cũng kiểm tra code để sync params
+                syncParamsFromCode();
+            }, 500);
+            
+            // A. KIỂM TRA VÀ TẢI DỮ LIỆU TEMPLATE NẾU CÓ template_id TRONG URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const templateId = urlParams.get('template_id');
+            
+            if (templateId) {
+                // MODE EDIT: Load dữ liệu template từ database
+                console.log(`Đang tải template với ID: ${templateId}`);
+                console.log(`API URL: ${API_URL}/get-template?template_id=${templateId}`);
+                
+                fetch(`${API_URL}/get-template?template_id=${templateId}`)
+                .then(res => {
+                    console.log(`Response status: ${res.status}`);
+                    if (!res.ok) {
+                        // Thử đọc error message từ response
+                        return res.json().then(errData => {
+                            throw new Error(errData.error || `HTTP error! status: ${res.status}`);
+                        });
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    console.log("Dữ liệu nhận được:", data);
+                    
+                    if (data.error) {
+                        alert("Lỗi: " + data.error);
+                        return;
+                    }
+                    
+                    // Kiểm tra dữ liệu có hợp lệ không
+                    if (!data || (!data.name && !data.code && !data.content)) {
+                        console.warn("Dữ liệu template không đầy đủ:", data);
+                    }
+                    
+                    // Load tên template
+                    const nameInput = document.getElementById('template-name-input');
+                    if (nameInput && data.name) {
+                        nameInput.value = data.name;
+                    }
+                    
+                    // Load difficulty
+                    const diffSelect = document.getElementById('template-difficulty-select');
+                    if (diffSelect && data.difficulty) {
+                        diffSelect.value = data.difficulty;
+                    }
+                    
+                    // Load tags
+                    if (data.tags && Array.isArray(data.tags)) {
+                        tagsData = data.tags;
+                        renderTags();
+                    }
+                    
+                    // Load content
+                    const contentInput = document.getElementById('editor-input');
+                    if (contentInput && data.content) {
+                        contentInput.value = data.content;
+                        // Trigger preview update
+                        if (typeof updatePreview === 'function') {
+                            updatePreview();
+                        }
+                    }
+                    
+                    // Load code (solver code)
+                    if (data.solver_code && typeof codeEditor !== 'undefined') {
+                        codeEditor.setValue(data.solver_code);
+                        console.log("Đã tải code vào CodeMirror thành công.");
+                    } else if (data.code && typeof codeEditor !== 'undefined') {
+                        // Fallback cho trường hợp API cũ
+                        codeEditor.setValue(data.code);
+                        console.log("Đã tải code vào CodeMirror thành công.");
+                    }
+                    
+                    // Load param_schema và render vào UI
+                    if (data.param_schema && Object.keys(data.param_schema).length > 0) {
+                        const container = document.getElementById('params-container');
+                        if (container) {
+                            container.innerHTML = ''; // Xóa placeholder
+                            
+                            // Render từng parameter
+                            Object.keys(data.param_schema).forEach((paramName, index) => {
+                                const paramDef = data.param_schema[paramName];
+                                
+                                // Xử lý exclude: có thể là array hoặc null
+                                let excludeArray = [];
+                                if (paramDef.exclude) {
+                                    if (Array.isArray(paramDef.exclude)) {
+                                        excludeArray = paramDef.exclude;
+                                    } else {
+                                        excludeArray = [paramDef.exclude];
+                                    }
+                                }
+                                
+                                const paramData = {
+                                    id: `param_${Date.now()}_${index}_${Math.random().toString(36).substr(2, 9)}`,
+                                    name: paramName,
+                                    type: paramDef.type || 'integer',
+                                    min: paramDef.min !== null && paramDef.min !== undefined ? paramDef.min : -5,
+                                    max: paramDef.max !== null && paramDef.max !== undefined ? paramDef.max : 5,
+                                    exclude: excludeArray,
+                                    default: paramDef.default,
+                                    description: paramDef.description || ''
+                                };
+                                
+                                const row = createParamRow(paramData);
+                                container.appendChild(row);
+                                paramsData.push({ id: row.dataset.paramId });
+                            });
+                        }
+                    }
+                    
+                    // Lưu template_id, category_id, subject_id để dùng khi save
+                    window.currentTemplateId = parseInt(templateId);
+                    window.currentCategoryId = data.category_id || null;
+                    window.currentSubjectId = data.subject_id || null;
+                    
+                    console.log("Đã tải dữ liệu template thành công.");
+                })
+                .catch(err => {
+                    console.error("Lỗi kết nối Backend:", err);
+                    console.error("Chi tiết lỗi:", err.message);
+                    alert("Lỗi khi tải dữ liệu template!\n\nChi tiết: " + err.message + "\n\nVui lòng kiểm tra:\n1. Backend server đã chạy chưa?\n2. Template ID có tồn tại không?");
+                });
+            } else {
+                // MODE CREATE: Kiểm tra category_id từ URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const categoryIdFromURL = urlParams.get('category_id');
+                
+                if (categoryIdFromURL) {
+                    window.currentCategoryId = parseInt(categoryIdFromURL);
+                    // Lấy subject_id từ category (nếu cần)
+                    fetch(`${API_URL}/categories/${categoryIdFromURL}/breadcrumb`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.breadcrumb && data.breadcrumb.length > 0) {
+                                const subject = data.breadcrumb.find(item => item.type === 'subject');
+                                if (subject) {
+                                    window.currentSubjectId = subject.id;
+                                }
+                            }
+                        })
+                        .catch(err => console.error("Lỗi khi lấy breadcrumb:", err));
+                }
+                
+                // Tải code mẫu (nếu có)
+                fetch(`${API_URL}/get-template`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.code && typeof codeEditor !== 'undefined') {
+                        codeEditor.setValue(data.code); // Gán vào editor có màu
+                        console.log("Đã tải code vào CodeMirror thành công.");
+                    }
+                })
+                .catch(err => console.error("Lỗi kết nối Backend:", err));
+            }
+            // B. Kết nối nút SAVE CHANGES
+            if (btnSave) {
+                btnSave.addEventListener('click', () => {
+                    // 1. Thu thập dữ liệu từ giao diện
+                    // Lấy Code từ editor
+                    const userCode = codeEditor.getValue(); 
+                    
+                    // Lấy tên Template
+                    const nameInput = document.getElementById('template-name-input');
+                    const templateName = nameInput ? nameInput.value : "Unknown Template";
+
+                    // Lấy độ khó
+                    const diffSelect = document.getElementById('template-difficulty-select');
+                    const difficulty = diffSelect ? diffSelect.value : "Medium";
+                    
+                    // Lấy template_id nếu đang ở chế độ edit
+                    const templateId = window.currentTemplateId || null;
+
+                    // Lấy nội dung câu hỏi
+                    const contentInput = document.getElementById('editor-input');
+                    const content = contentInput ? contentInput.value : "";
+
+                    // Lấy Tags (Biến tagsData lấy từ đoạn code tags tôi đã hướng dẫn trước đó)
+                    // Nếu bạn chưa khai báo global, hãy đảm bảo biến tagsData truy cập được ở đây.
+                    const currentTags = (typeof tagsData !== 'undefined') ? tagsData : [];
+
+                    // Lấy param_schema từ UI
+                    const paramSchema = collectParamSchema();
+                    
+                    // Lấy category_id và subject_id từ URL hoặc từ template hiện tại
+                    const urlParams = new URLSearchParams(window.location.search);
+                    let categoryId = urlParams.get('category_id');
+                    let subjectId = null;
+                    
+                    // Nếu đang edit và chưa có category_id, lấy từ template hiện tại
+                    if (templateId && !categoryId) {
+                        // categoryId sẽ được lấy từ template data khi load
+                        categoryId = window.currentCategoryId || null;
+                        subjectId = window.currentSubjectId || null;
+                    } else if (categoryId) {
+                        // Nếu có category_id, lấy subject_id từ category
+                        // Tạm thời để null, backend sẽ tự động lấy từ category
+                        subjectId = null; // Backend sẽ tự động lấy từ category
+                    }
+
+                    // 2. Gửi về Backend
+                    const payload = {
+                        name: templateName,
+                        difficulty: difficulty,
+                        tags: currentTags,
+                        content: content,
+                        code: userCode,
+                        param_schema: paramSchema,
+                        category_id: categoryId ? parseInt(categoryId) : null,
+                        subject_id: subjectId ? parseInt(subjectId) : null
+                    };
+                    
+                    // Thêm template_id nếu đang edit
+                    if (templateId) {
+                        payload.template_id = templateId;
+                    }
+
+                    // Hiển thị trạng thái đang lưu (UX)
+                    btnSave.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Saving...';
+
+                    fetch(`${API_URL}/save-template`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.message || data.success) {
+                            const message = templateId ? "✅ Cập nhật template thành công!" : "✅ Tạo template thành công!";
+                            alert(message);
+                            // Chuyển hướng về trang quản lý sau khi lưu thành công
+                            setTimeout(() => {
+                                // Giữ lại category_id trong URL nếu có
+                                const redirectUrl = categoryId 
+                                    ? `Template_management.html?category_id=${categoryId}`
+                                    : 'Template_management.html';
+                                window.location.href = redirectUrl;
+                            }, 1000);
+                        }
+                        if(data.error) alert("❌ Lỗi: " + data.error);
+                    })
+                    .catch(err => alert("Lỗi kết nối Server!"))
+                    .finally(() => {
+                        // Trả lại nút bấm cũ
+                        btnSave.innerHTML = '<span class="material-symbols-outlined text-[20px]">save</span><span>Save Changes</span>';
+                    });
+                });
+            }
+
+            // 3. KẾT NỐI NÚT CHẠY (RUN TEST) - PHIÊN BẢN PRO
+            if (btnRun) {
+                btnRun.addEventListener('click', () => {
+                    const userCode = codeEditor.getValue();
+                    const variableContainer = document.getElementById('variable-container');
+                    const consoleLogs = document.getElementById('console-logs');
+                    
+                    // Lấy giờ hiện tại để log
+                    const startTime = new Date().toLocaleTimeString('en-US', { hour12: false });
+
+                    // 1. Hiển thị trạng thái "Đang chạy..."
+                    consoleLogs.innerHTML = `
+                        <div class="flex gap-2">
+                            <span class="text-gray-500">[${startTime}]</span>
+                            <span class="text-yellow-400">System: Sending request to server...</span>
+                        </div>
+                    `;
+
+                    fetch(`${API_URL}/run-code`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ code: userCode })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        const endTime = new Date().toLocaleTimeString('en-US', { hour12: false });
+                        
+                        // --- A. HIỂN THỊ BIẾN (INPUTS) ---
+                        variableContainer.innerHTML = ''; // Xóa input cũ
+                        
+                        if (data.variables && Object.keys(data.variables).length > 0) {
+                            // Duyệt qua từng biến (a11, a12...) và tạo ô input đẹp
+                            for (const [key, value] of Object.entries(data.variables)) {
+                                const inputHTML = `
+                                    <label class="flex items-center gap-2 bg-[#1e1e1e] p-1.5 rounded border border-gray-700 focus-within:border-primary transition-colors">
+                                        <span class="text-blue-400 font-bold">${key}:</span>
+                                        <input class="bg-transparent border-none p-0 w-full text-white text-sm focus:ring-0 font-mono outline-none" type="text" value="${value}" readonly/>
+                                    </label>
+                                `;
+                                variableContainer.insertAdjacentHTML('beforeend', inputHTML);
+                            }
+                        } else {
+                            variableContainer.innerHTML = '<span class="text-gray-500 text-xs italic">No variables generated.</span>';
+                        }
+
+                        // --- B. HIỂN THỊ LOGS (CONSOLE) ---
+                        
+                        // Xây dựng nội dung log HTML
+                        let logHTML = ``;
+                        
+                        // Dòng 1: Báo chạy file
+                        logHTML += `
+                            <div class="flex gap-2">
+                                <span class="text-gray-500">[${endTime}]</span>
+                                <span class="text-yellow-400">Running solver.py...</span>
+                            </div>`;
+
+                        // Dòng 2: Báo input
+                        if (data.variables) {
+                            // Format JSON đẹp hơn: bỏ ngoặc kép ở key
+                            const varString = JSON.stringify(data.variables).replace(/"([^"]+)":/g, '$1:').replace(/,/g, ', ');
+                            logHTML += `
+                            <div class="flex gap-2">
+                                <span class="text-gray-500 opacity-0">[${endTime}]</span>
+                                <span class="text-slate-400">Variable inputs: ${varString}</span>
+                            </div>`;
+                        }
+
+                        // Dòng 3: Kết quả hoặc Lỗi
+                        if (data.error) {
+                            logHTML += `
+                            <div class="flex gap-2 mt-1">
+                                <span class="text-gray-500">[${endTime}]</span>
+                                <span class="text-red-500 font-bold">Lỗi Runtime: ${data.error}</span>
+                            </div>`;
+                        } else {
+                            // Hiển thị result nếu có (từ hàm solve() hoặc từ print())
+                            if (data.result && data.result !== 'null' && data.result !== 'None') {
+                                logHTML += `
+                                <div class="flex gap-2 mt-1">
+                                    <span class="text-gray-500">[${endTime}]</span>
+                                    <span class="text-green-400 font-bold">> Output: ${data.result}</span>
+                                </div>`;
+                            }
+                            
+                            // Hiển thị logs nếu có (cho code không có 2 hàm, chỉ có print)
+                            if (data.logs) {
+                                const logLines = data.logs.split('\n').filter(line => {
+                                    const trimmed = line.trim();
+                                    return trimmed && 
+                                           !trimmed.includes('Running solver logic...') && 
+                                           !trimmed.includes('Running code...') &&
+                                           !trimmed.includes('Lỗi: Không tìm thấy hàm') &&
+                                           !trimmed.startsWith('Variable inputs:');
+                                });
+                                if (logLines.length > 0) {
+                                    logLines.forEach(line => {
+                                        if (line.trim()) {
+                                            logHTML += `
+                                            <div class="flex gap-2 mt-1">
+                                                <span class="text-gray-500">[${endTime}]</span>
+                                                <span class="text-green-400">${line}</span>
+                                            </div>`;
+                                        }
+                                    });
+                                }
+                            }
+                            
+                            logHTML += `
+                            <div class="flex gap-2">
+                                <span class="text-gray-500">[${endTime}]</span>
+                                <span class="text-slate-500">Process finished with exit code 0</span>
+                            </div>`;
+                        }
+
+                        // Cập nhật giao diện log
+                        consoleLogs.innerHTML = logHTML;
+                    })
+                    .catch(err => {
+                        consoleLogs.innerHTML += `<div class="text-red-500 mt-2">Lỗi kết nối: ${err}</div>`;
+                    });
+                });
+            }
+        }
+        // --- PHẦN 4 & 5 (GỘP): QUẢN LÝ TAB, UPLOAD VÀ NEW FILE ---
+
+        const fileTabsContainer = document.getElementById('file-tabs-container');
+        const btnUpload = document.getElementById('btn-upload');
+        const fileInputHidden = document.getElementById('file-input-hidden');
+        const btnNewFile = document.getElementById('btn-new-file');
+
+        // 1. HÀM TẠO TAB MỚI
+        function createFileTab(filename) {
+            fileTabsContainer.innerHTML = ''; 
+
+            const tabHTML = `
+                <div class="px-3 py-2 text-sm text-slate-300 border-t-2 border-primary bg-[#1e1e1e] flex items-center gap-2 min-w-fit select-none group">
+                    <span class="material-symbols-outlined text-[14px] text-yellow-400">description</span>
+                    
+                    <span id="tab-filename" class="font-mono border border-transparent rounded px-1 hover:border-gray-600 cursor-text" title="Double click để đổi tên">${filename}</span>
+                    
+                    <span id="btn-close-tab" class="material-symbols-outlined text-[14px] text-gray-500 hover:text-red-500 cursor-pointer ml-2 rounded-full p-0.5 hover:bg-white/10 transition-colors" title="Đóng file">close</span>
+                </div>
+            `;
+            
+            fileTabsContainer.innerHTML = tabHTML;
+
+            // --- A. XỬ LÝ ĐÓNG TAB ---
+            document.getElementById('btn-close-tab').addEventListener('click', function() {
+                if(confirm("Bạn muốn đóng file này? Nội dung chưa lưu sẽ bị mất.")) {
+                    fileTabsContainer.innerHTML = ''; 
+                    codeEditor.setValue('');
+                }
+            });
+            // --- B. XỬ LÝ ĐỔI TÊN (DOUBLE CLICK) ---
+            const nameSpan = document.getElementById('tab-filename');
+            
+            // Hàm kích hoạt chế độ sửa
+            function enableEditMode() {
+                const currentName = nameSpan.innerText;
+                
+                // Tạo thẻ Input để nhập liệu
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = currentName;
+                input.className = 'bg-[#3c3c3c] text-white font-mono text-sm border border-primary outline-none px-1 w-[150px] rounded'; // Style cho input
+                
+                // Hàm lưu tên mới
+                function saveName() {
+                    const newName = input.value.trim();
+                    if (newName.length > 0) {
+                        nameSpan.innerText = newName; // Cập nhật tên mới
+                        console.log(`Đã đổi tên file thành: ${newName}`);
+                    } else {
+                        nameSpan.innerText = currentName; // Nếu rỗng thì trả về tên cũ
+                    }
+                    input.replaceWith(nameSpan); // Trả lại thẻ Span
+                }
+
+                // Xử lý khi bấm phím trong Input
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        saveName(); // Enter -> Lưu
+                    } else if (e.key === 'Escape') {
+                        nameSpan.innerText = currentName; // Esc -> Hủy
+                        input.replaceWith(nameSpan);
+                    }
+                });
+
+                // Xử lý khi click ra ngoài (Blur) -> Tự động lưu
+                input.addEventListener('blur', saveName);
+
+                // Thay thế Span bằng Input
+                nameSpan.replaceWith(input);
+                input.focus(); // Đưa con trỏ vào nhập luôn
+                input.select(); // Bôi đen toàn bộ tên cũ cho tiện sửa
+            }
+
+            // Gắn sự kiện Double Click
+            nameSpan.addEventListener('dblclick', enableEditMode);
+        }
+
+        // 2. XỬ LÝ UPLOAD FILE
+        if (btnUpload && fileInputHidden) {
+            btnUpload.addEventListener('click', () => fileInputHidden.click());
+
+            fileInputHidden.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // SỬA: Đổ nội dung vào CodeMirror bằng setValue
+                    codeEditor.setValue(e.target.result);
+                    
+                    // --- TẠO TAB VỚI TÊN FILE VỪA CHỌN ---
+                    createFileTab(file.name); 
+                    console.log(`Đã tải file: ${file.name}`);
+                };
+                reader.readAsText(file);
+                fileInputHidden.value = ''; 
+            });
+        }
+
+        // 3. XỬ LÝ NEW FILE (DẤU CỘNG)
+        if (btnNewFile) {
+            btnNewFile.addEventListener('click', () => {
+                // SỬA: Kiểm tra độ dài nội dung bằng codeEditor.getValue()
+                if (codeEditor.getValue().trim().length > 0) {
+                    if(!confirm("Tạo file mới sẽ xóa nội dung hiện tại?")) return;
+                }
+                
+                // SỬA: Gán code mẫu bằng setValue
+                codeEditor.setValue("import math\nimport random\n\n# Code mới...\n");
+                createFileTab('solver.py'); // Tự động tạo tab mặc định
+                codeEditor.focus();
+            });
+        }
+
+        // --- PHẦN 6: XỬ LÝ NÚT CLEAR ---
+        const btnClearCode = document.getElementById('btn-clear-code');
+
+        if (btnClearCode) {
+            btnClearCode.addEventListener('click', () => {
+                // SỬA: Kiểm tra và xóa trắng bằng CodeMirror
+                if (codeEditor.getValue().trim().length > 0) {
+                    const isConfirm = confirm("Bạn có chắc chắn muốn xóa toàn bộ mã nguồn đang hiển thị?");
+                    if (!isConfirm) return;
+                }
+
+                codeEditor.setValue(""); // SỬA: Xóa nội dung trong editor có màu
+                
+                const consoleLogs = document.getElementById('console-logs');
+                if (consoleLogs) consoleLogs.innerHTML = "";
+                
+                const variableContainer = document.getElementById('variable-container');
+                if (variableContainer) variableContainer.innerHTML = "";
+
+                codeEditor.focus();
+                console.log("Editor cleared.");
+            });
+        }
+    });
+</script>
+</body></html>

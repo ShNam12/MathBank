@@ -1,0 +1,14 @@
+# Backend Dependencies
+# Flask framework cho REST API
+Flask>=2.3.0
+flask-cors>=4.0.0
+numpy>=1.26.0
+# SymPy - Thư viện toán học symbolic để giải các bài toán
+sympy>=1.12
+# Environment variables management
+python-dotenv>=1.0.0
+# Gemini API (optional - chỉ cần khi dùng AI features)
+google-generativeai>=0.3.0
+# Pydantic - Data validation cho structured output từ AI
+pydantic>=2.0.0
+
